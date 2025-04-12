@@ -7,6 +7,7 @@ import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_theme.dart';
 import 'package:portal_pegawai_app/presentation/splash/bloc/splash_cubit.dart';
 
+//test
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
