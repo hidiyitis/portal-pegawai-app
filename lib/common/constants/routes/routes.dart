@@ -12,6 +12,8 @@ class Routes {
         return MaterialPageRoute(builder: (context) => LoginPage());
       case RoutesName.homeScreen:
         return MaterialPageRoute(builder: (context) => HomePage());
+      case RoutesName().pengajuanCutiScreen:
+        return MaterialPageRoute(builder: (context) => PengajuanCutiPage());
 
       default:
         return MaterialPageRoute(
