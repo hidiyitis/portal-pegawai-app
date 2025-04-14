@@ -4,7 +4,8 @@ class AppColors {
   // Primary colors
   static const Color primary = Color.fromARGB(255, 0, 172, 181);
   static const Color primaryVariant = Color.fromARGB(255, 163, 202, 204);
-  // static const Color secondary = Color(0xFF03DAC6);
+  static const Color primaryBoldVariant = Color(0xff007C82);
+  static const Color secondary = Color(0xFFFF9933);
   // static const Color secondaryVariant = Color(0xFF018786);
 
   // Background colors

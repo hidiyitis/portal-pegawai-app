@@ -11,6 +11,11 @@ class AppTheme {
       backgroundColor: AppColors.background,
       contentTextStyle: TextStyle(color: AppColors.primary),
     ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: AppColors.onBackground,
+      selectedItemColor: AppColors.primary,
+      type: BottomNavigationBarType.fixed,
+    ),
     fontFamily: 'Inter-Regular',
     inputDecorationTheme: InputDecorationTheme(
       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -28,10 +33,6 @@ class AppTheme {
         borderRadius: BorderRadius.circular(8),
         borderSide: BorderSide(color: AppColors.primary),
       ),
-      // enabledBorder: OutlineInputBorder(
-      //   borderRadius: BorderRadius.circular(8),
-      //   borderSide: BorderSide(color: AppColors.background),
-      // ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

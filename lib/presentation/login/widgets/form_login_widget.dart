@@ -74,12 +74,12 @@ class _FormLoginWidgetState extends State<FormLoginWidget> {
               );
             },
             listener: (context, state) {
-              if (state is AuthFailure) {
+              if (state is AuthUnauthenticated) {
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text(state.message)));
               }
-              if (state is AuthSuccess) {
+              if (state is AuthAuthenticated) {
                 Navigator.pushReplacementNamed(context, RoutesName.homeScreen);
               }
             },

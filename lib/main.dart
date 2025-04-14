@@ -3,13 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portal_pegawai_app/common/constants/routes/routes.dart';
 import 'package:portal_pegawai_app/common/constants/routes/routes_name.dart';
-import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
+import 'package:portal_pegawai_app/core/configs/inject_dependency.dart' as di;
 import 'package:portal_pegawai_app/core/configs/theme/app_theme.dart';
-import 'package:portal_pegawai_app/presentation/splash/bloc/splash_cubit.dart';
+import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
+import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
+import 'package:portal_pegawai_app/presentation/login/bloc/auth_bloc.dart';
+import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await init();
+  await di.init();
   runApp(const MyApp());
 }
 
@@ -22,8 +25,16 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent),
     );
-    return BlocProvider(
-      create: (context) => SplashCubit()..appStarted(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create:
+              (context) =>
+                  AuthBloc(authRepository: di.getIt<AuthRepository>())
+                    ..add(AuthCheckEvent()),
+        ),
+        BlocProvider(create: (context) => NavigationBloc()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.appTheme,
