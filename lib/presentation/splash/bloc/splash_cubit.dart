@@ -8,17 +8,20 @@ class SplashCubit extends Cubit<SplashState> {
   SplashCubit() : super(DisplaySplash());
 
   void appStarted() async {
-    var expiredAt = getIt<SharedPreferences>().getString(
-      'access_token_expired_at',
-    );
-    await Future.delayed(Duration(seconds: 3));
-    if (expiredAt != null &&
-        DateTime.now().isBefore(DateTime.parse(expiredAt))) {
-      emit(Authenticated());
-      return;
-    }
-    getIt<AuthRepository>().clearAuthData();
-    emit(UnAuthenticated());
+    //   var expiredAt = getIt<SharedPreferences>().getString(
+    //     'access_token_expired_at',
+    //   );
+    //   await Future.delayed(Duration(seconds: 3));
+    //   if (expiredAt != null &&
+    //       DateTime.now().isBefore(DateTime.parse(expiredAt))) {
+    //     emit(Authenticated());
+    //     return;
+    //   }
+    //   getIt<AuthRepository>().clearAuthData();
+    //   emit(UnAuthenticated());
+    //   return;
+    await Future.delayed(Duration(seconds: 2));
+    emit(Authenticated());
     return;
   }
 }
