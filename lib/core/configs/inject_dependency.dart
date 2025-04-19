@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:portal_pegawai_app/data/local/auth_local_data_source.dart';
+import 'package:portal_pegawai_app/data/repositories/cuti_repository_impl.dart';
+import 'package:portal_pegawai_app/domain/repositories/cuti_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:portal_pegawai_app/data/datasources/auth_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/repositories/auth_repository_impl.dart';
@@ -43,4 +45,5 @@ Future<void> init() async {
       local: getIt<AuthLocalDataSource>(),
     ),
   );
+  getIt.registerLazySingleton<CutiRepository>(() => CutiRepositoryImpl());
 }

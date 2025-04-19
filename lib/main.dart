@@ -10,6 +10,7 @@ import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigatio
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_bloc.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
 
+//test
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
