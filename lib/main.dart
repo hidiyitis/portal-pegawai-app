@@ -9,9 +9,11 @@ import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_bloc.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id', null);
   await di.init();
   runApp(const MyApp());
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:iconly/iconly.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_event.dart';
@@ -8,6 +9,7 @@ import 'package:portal_pegawai_app/presentation/home/widgets/agenda_widget.dart'
 import 'package:portal_pegawai_app/presentation/home/widgets/attendance_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/header_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/leave_widget.dart';
+import 'package:portal_pegawai_app/presentation/home/pages/calendar/calendar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -69,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       case 1:
-        return Center(child: Text('Kalender'));
+        return const CalendarScreen();
       case 2:
         return Center(child: Text('Pengaturan'));
       default:
