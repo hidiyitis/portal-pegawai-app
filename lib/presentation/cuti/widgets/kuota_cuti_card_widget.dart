@@ -1,4 +1,3 @@
-// lib/presentation/cuti/widgets/kuota_cuti_card_widget.dart
 import 'package:flutter/material.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
@@ -109,7 +108,7 @@ class KuotaCutiCardWidget extends StatelessWidget {
                     Text(
                       '$ditolak',
                       style: TextStyle(
-                        color: AppColors.onError,
+                        color: Colors.red,
                         fontSize: AppTextSize.headingMedium,
                         fontWeight: FontWeight.bold,
                       ),

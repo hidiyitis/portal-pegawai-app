@@ -8,7 +8,8 @@ abstract class CutiRepository {
   Future<List<ManagerEntity>> getDaftarManager();
   Future<CutiEntity> ajukanCuti({
     required String kegiatan,
-    required String tanggal,
+    required String tanggalMulai,
+    required String tanggalSelesai,
     required int managerId,
     String? lampiran,
     String? catatan,

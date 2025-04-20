@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portal_pegawai_app/common/constants/routes/routes_name.dart';
-import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/domain/entities/cuti_entity.dart';
@@ -10,6 +9,7 @@ import 'package:portal_pegawai_app/presentation/cuti/bloc/cuti_state.dart';
 import 'package:portal_pegawai_app/presentation/cuti/widgets/cuti_item_widget.dart';
 import 'package:portal_pegawai_app/presentation/cuti/widgets/kuota_cuti_card_widget.dart';
 import 'package:portal_pegawai_app/presentation/cuti/widgets/status_filter_widget.dart';
+import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 
 class PengajuanCutiPage extends StatefulWidget {
   const PengajuanCutiPage({super.key});
@@ -25,7 +25,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
   @override
   void initState() {
     super.initState();
-    // Set default filter to semua at initialization
     _currentFilter = 'semua';
   }
 
@@ -33,6 +32,8 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.onPrimary,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -48,7 +49,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
       body: BlocProvider<CutiCubit>(
         create: (context) {
           _cutiCubit = CutiCubit(cutiRepository: getIt());
-          // Load all data at once
           _cutiCubit.loadAllData(filter: _currentFilter);
           return _cutiCubit;
         },
@@ -81,14 +81,11 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
                 state.daftarCuti,
               );
             } else {
-              // Initial state or unexpected state
               return Center(child: CircularProgressIndicator());
             }
           },
         ),
       ),
-
-      // Add floating action button to navigate to formulir cuti
     );
   }
 
@@ -102,7 +99,7 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
   ) {
     return Column(
       children: [
-        // Kartu kuota cuti
+        //detail cuti
         KuotaCutiCardWidget(
           kuotaTotal: kuotaTotal,
           dalamPengajuan: dalamPengajuan,
@@ -110,24 +107,23 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
           disetujui: disetujui,
           onAjukanPressed: () {
             Navigator.of(context).pushNamed(RoutesName.formCuti).then((_) {
-              // Refresh data setelah kembali dari formulir
               _cutiCubit.loadAllData(filter: _currentFilter);
             });
           },
         ),
 
-        // Filter status
+        // status
         StatusFilterWidget(
           currentFilter: _currentFilter,
           onFilterChanged: (filter) {
             setState(() {
               _currentFilter = filter;
             });
-            _cutiCubit.getDaftarCuti(filter: filter);
+            _cutiCubit.loadAllData(filter: _currentFilter);
           },
         ),
 
-        // Daftar riwayat cuti
+        // riwayat cuti
         Expanded(
           child:
               daftarCuti.isEmpty
@@ -147,7 +143,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
             'assets/images/empty_state.png',
             width: 150,
             height: 150,
-            // Fallback if the image isn't available
             errorBuilder: (context, error, stackTrace) {
               return Icon(
                 Icons.work_off_outlined,
@@ -179,7 +174,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
         return CutiItemWidget(
           cuti: cuti,
           onTap: () {
-            // TODO: Tampilkan detail cuti
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Detail untuk cuti ID: ${cuti.id}')),
             );

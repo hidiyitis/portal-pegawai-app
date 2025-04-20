@@ -17,11 +17,10 @@ class CutiCubit extends Cubit<CutiState> {
       final kuotaCuti = await cutiRepository.getKuotaCuti();
       _kuotaCuti = kuotaCuti;
 
-      // If we already have daftar cuti data, emit combined state
       if (_daftarCuti != null) {
         emit(
           CutiDataLoaded(
-            kuotaCuti: kuotaCuti,
+            kuotaCuti: _kuotaCuti!,
             daftarCuti: _daftarCuti!,
             filter: _currentFilter,
           ),
@@ -50,7 +49,6 @@ class CutiCubit extends Cubit<CutiState> {
 
       _daftarCuti = filteredList;
 
-      // If we already have kuota data, emit combined state
       if (_kuotaCuti != null) {
         emit(
           CutiDataLoaded(
@@ -68,7 +66,6 @@ class CutiCubit extends Cubit<CutiState> {
   Future<void> loadAllData({String filter = 'semua'}) async {
     emit(CutiLoading());
     try {
-      // Load both data in parallel
       final kuotaFuture = cutiRepository.getKuotaCuti();
       final daftarCutiFuture = cutiRepository.getDaftarCuti();
 
@@ -111,7 +108,8 @@ class CutiCubit extends Cubit<CutiState> {
 
   Future<void> ajukanCuti({
     required String kegiatan,
-    required String tanggal,
+    required String tanggalMulai,
+    required String tanggalSelesai,
     required int managerId,
     String? lampiran,
     String? catatan,
@@ -120,7 +118,8 @@ class CutiCubit extends Cubit<CutiState> {
     try {
       final cuti = await cutiRepository.ajukanCuti(
         kegiatan: kegiatan,
-        tanggal: tanggal,
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
         managerId: managerId,
         lampiran: lampiran,
         catatan: catatan,
