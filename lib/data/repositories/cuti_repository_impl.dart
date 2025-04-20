@@ -9,7 +9,7 @@ import 'package:portal_pegawai_app/core/errors/error.dart';
 
 class CutiRepositoryImpl implements CutiRepository {
   final List<CutiModel> _daftarCuti = [
-    // data fek
+    // data fek, dummy
     CutiModel(
       id: 1,
       kegiatan: 'Cuti Menikah',
@@ -18,7 +18,7 @@ class CutiRepositoryImpl implements CutiRepository {
       managerId: 1,
       managerNama: 'Budi Santoso',
       status: 'disetujui',
-      tanggalPengajuan: DateTime.now().toString(), // Added required parameter
+      tanggalPengajuan: DateTime.now().toString(),
     ),
   ];
 
@@ -34,7 +34,7 @@ class CutiRepositoryImpl implements CutiRepository {
     ManagerModel(id: 2, nama: 'Dewi Pratiwi', jabatan: 'Kepala HRD'),
     ManagerModel(id: 3, nama: 'Andi Wijaya', jabatan: 'Kepala Keuangan'),
   ];
-  //buat liburan
+
   final List<DateTime> _publicHolidays = [
     DateTime(2024, 8, 17),
     DateTime(2024, 12, 25),
@@ -127,7 +127,7 @@ class CutiRepositoryImpl implements CutiRepository {
       lampiran: lampiran,
       catatan: catatan,
       status: 'dalam_pengajuan',
-      tanggalPengajuan: DateTime.now().toString(), // Baru
+      tanggalPengajuan: DateTime.now().toString(),
     );
 
     _daftarCuti.add(newCuti);

@@ -39,7 +39,7 @@ class _FormCutiPageState extends State<FormCutiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // Perubahan warna AppBar
+        backgroundColor: Colors.white,
         foregroundColor: AppColors.onPrimary,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -117,7 +117,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Kegiatan
             Text(
               'Kegiatan',
               style: TextStyle(
@@ -142,7 +141,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Tanggal Mulai
             Text(
               'Tanggal Mulai Cuti',
               style: TextStyle(
@@ -182,7 +180,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Tanggal Selesai
             Text(
               'Tanggal Selesai Cuti',
               style: TextStyle(
@@ -222,7 +219,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Manager
             Text(
               'Manager',
               style: TextStyle(
@@ -259,7 +255,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Lampiran
             Text(
               'Lampiran',
               style: TextStyle(
@@ -320,7 +315,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Catatan
             Text(
               'Catatan',
               style: TextStyle(
@@ -349,7 +343,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 32),
 
-            // Button Selesai
             SizedBox(
               width: double.infinity,
               height: 50,

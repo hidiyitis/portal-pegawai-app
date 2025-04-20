@@ -99,7 +99,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
   ) {
     return Column(
       children: [
-        //detail cuti
         KuotaCutiCardWidget(
           kuotaTotal: kuotaTotal,
           dalamPengajuan: dalamPengajuan,
@@ -112,7 +111,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
           },
         ),
 
-        // status
         StatusFilterWidget(
           currentFilter: _currentFilter,
           onFilterChanged: (filter) {
@@ -123,7 +121,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
           },
         ),
 
-        // riwayat cuti
         Expanded(
           child:
               daftarCuti.isEmpty

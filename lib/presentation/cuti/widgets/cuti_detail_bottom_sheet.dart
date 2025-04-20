@@ -10,7 +10,7 @@ class CutiDetailBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(24), // Perbesar padding
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -29,18 +29,15 @@ class CutiDetailBottomSheet extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            _buildDetailItem('Kegiatan', cuti.kegiatan ?? '-'),
-            _buildDetailItem('Tanggal Mulai Cuti', cuti.tanggalMulai ?? '-'),
-            _buildDetailItem(
-              'Tanggal Selesai Cuti',
-              cuti.tanggalSelesai ?? '-',
-            ),
+            _buildDetailItem('Kegiatan', cuti.kegiatan),
+            _buildDetailItem('Tanggal Mulai Cuti', cuti.tanggalMulai),
+            _buildDetailItem('Tanggal Selesai Cuti', cuti.tanggalSelesai),
             _buildDetailItem(
               'Tanggal Pengajuan',
-              _extractDateHourMinute(cuti.tanggalPengajuan ?? '-'),
-            ), // Baru
-            _buildDetailItem('Manager', cuti.managerNama ?? '-'),
-            _buildDetailItem('Status', _getStatusText(cuti.status ?? '')),
+              _extractDateHourMinute(cuti.tanggalPengajuan),
+            ),
+            _buildDetailItem('Manager', cuti.managerNama),
+            _buildDetailItem('Status', _getStatusText(cuti.status)),
             _buildDetailItem('Catatan', cuti.catatan ?? '-'),
           ],
         ),
@@ -64,7 +61,7 @@ class CutiDetailBottomSheet extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 16), // Perbesar jarak antar item
+        SizedBox(height: 16),
       ],
     );
   }
@@ -84,7 +81,6 @@ class CutiDetailBottomSheet extends StatelessWidget {
 
   String _extractDateHourMinute(String datetime) {
     try {
-      // Assuming datetime format like 'yyyy-MM-dd HH:mm:ss' or similar
       final parts = datetime.split(' ');
       if (parts.length >= 2) {
         final datePart = parts[0];
@@ -95,7 +91,7 @@ class CutiDetailBottomSheet extends StatelessWidget {
         }
         return datePart;
       }
-      return datetime; // fallback
+      return datetime;
     } catch (e) {
       return datetime;
     }

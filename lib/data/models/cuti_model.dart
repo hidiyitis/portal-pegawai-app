@@ -11,7 +11,7 @@ class CutiModel extends CutiEntity {
     super.lampiran,
     super.catatan,
     required super.status,
-    required super.tanggalPengajuan, // Baru
+    required super.tanggalPengajuan,
   });
 
   factory CutiModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ class CutiModel extends CutiEntity {
       lampiran: json['lampiran'],
       catatan: json['catatan'],
       status: json['status'],
-      tanggalPengajuan: json['tanggal_pengajuan'], // Baru
+      tanggalPengajuan: json['tanggal_pengajuan'],
     );
   }
 
@@ -40,7 +40,7 @@ class CutiModel extends CutiEntity {
       'lampiran': lampiran,
       'catatan': catatan,
       'status': status,
-      'tanggal_pengajuan': tanggalPengajuan, // Baru
+      'tanggal_pengajuan': tanggalPengajuan,
     };
   }
 }

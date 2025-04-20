@@ -254,7 +254,6 @@ class CutiItemWidget extends StatelessWidget {
 
   String _extractDateHourMinute(String datetime) {
     try {
-      // Assuming datetime format like 'yyyy-MM-dd HH:mm:ss' or similar
       final parts = datetime.split(' ');
       if (parts.length >= 2) {
         final datePart = parts[0];
@@ -265,7 +264,7 @@ class CutiItemWidget extends StatelessWidget {
         }
         return datePart;
       }
-      return datetime; // fallback
+      return datetime;
     } catch (e) {
       return datetime;
     }

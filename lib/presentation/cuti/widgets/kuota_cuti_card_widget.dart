@@ -37,7 +37,6 @@ class KuotaCutiCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Statistik cuti - baris 1
           Row(
             children: [
               Expanded(
@@ -90,7 +89,6 @@ class KuotaCutiCardWidget extends StatelessWidget {
           ),
           SizedBox(height: 16),
 
-          // Statistik cuti - baris 2
           Row(
             children: [
               Expanded(
@@ -143,7 +141,6 @@ class KuotaCutiCardWidget extends StatelessWidget {
           ),
           SizedBox(height: 24),
 
-          // Button ajukan cuti
           SizedBox(
             width: double.infinity,
             height: 48,
