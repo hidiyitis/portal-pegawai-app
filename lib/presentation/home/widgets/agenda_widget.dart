@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
+import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
+import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_event.dart';
 
 class AgendaWidget extends StatefulWidget {
-  const AgendaWidget({super.key});
+  const AgendaWidget({super.key, required List<Map<String, dynamic>> agendas});
 
   @override
   State<AgendaWidget> createState() => _AgendaWidgetState();
@@ -24,25 +27,6 @@ class _AgendaWidgetState extends State<AgendaWidget> {
                 fontSize: AppTextSize.bodyLarge,
               ),
             ),
-            // GestureDetector(
-            //   onTap: () {},
-            //   child: Row(
-            //     children: [
-            //       Text(
-            //         'Lihat selengkapnya',
-            //         style: TextStyle(
-            //           color: AppColors.onPrimary,
-            //           fontSize: AppTextSize.bodyLarge,
-            //         ),
-            //       ),
-            //       Icon(
-            //         Icons.chevron_right_outlined,
-            //         size: 24,
-            //         color: AppColors.onPrimary,
-            //       ),
-            //     ],
-            //   ),
-            // ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 2),
@@ -51,7 +35,10 @@ class _AgendaWidgetState extends State<AgendaWidget> {
                 surfaceTintColor: AppColors.onPrimary,
                 overlayColor: Colors.transparent,
               ),
-              onPressed: () {},
+              onPressed:
+                  () => context.read<NavigationBloc>().add(
+                    NavigationTabChanged(1),
+                  ),
               child: Row(
                 children: [
                   Text(

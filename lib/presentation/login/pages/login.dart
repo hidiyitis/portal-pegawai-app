@@ -26,28 +26,30 @@ class _LoginPageState extends State<LoginPage> {
               create:
                   (context) =>
                       AuthBloc(authRepository: getIt<AuthRepository>()),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Selamat Datang',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: AppTextSize.headingMedium,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Selamat Datang',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppTextSize.headingMedium,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Portal Pegawai',
-                    style: TextStyle(
-                      color: AppColors.onSurface,
-                      fontWeight: FontWeight.bold,
-                      fontSize: AppTextSize.headingSmall,
+                    Text(
+                      'Portal Pegawai',
+                      style: TextStyle(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppTextSize.headingSmall,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 64),
-                  FormLoginWidget(),
-                ],
+                    SizedBox(height: 64),
+                    FormLoginWidget(),
+                  ],
+                ),
               ),
             ),
           ),

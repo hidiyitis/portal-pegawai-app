@@ -15,7 +15,7 @@ Future<void> init() async {
   getIt.registerLazySingleton(
     () => Dio(
       BaseOptions(
-        baseUrl: 'http://192.168.18.201:3000/api/v1',
+        baseUrl: 'http://10.60.0.113:3000/api/v1',
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       ),

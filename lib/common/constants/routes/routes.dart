@@ -16,7 +16,8 @@ class Routes {
         return MaterialPageRoute(builder: (context) => PengajuanCutiPage());
       case RoutesName.formCuti:
         return MaterialPageRoute(builder: (context) => FormCutiPage());
-
+      case RoutesName.profileScreen:
+        return MaterialPageRoute(builder: (context) => ProfilePage());
       default:
         return MaterialPageRoute(
           builder:

@@ -45,5 +45,12 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
+    dialogTheme: DialogTheme(
+      backgroundColor: Colors.white,
+      contentTextStyle: TextStyle(color: AppColors.onPrimary),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: AppColors.primary,
+    ),
   );
 }
