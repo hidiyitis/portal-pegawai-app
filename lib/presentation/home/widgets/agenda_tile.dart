@@ -24,8 +24,8 @@ class AgendaTile extends StatelessWidget {
             radius: 24,
             backgroundColor: agenda.color,
             child: Text(
-              agenda
-                  .dateLabel, // Disarankan: buat `dateLabel` di model misalnya '1\nMar'
+              agenda.dateLabel,
+
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 10,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
+import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
+import 'package:portal_pegawai_app/core/configs/assets/app_images.dart';
 
 class AddAgendaScreen extends StatefulWidget {
   const AddAgendaScreen({super.key});
@@ -13,8 +16,8 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
   final TextEditingController _tempatController = TextEditingController();
   final TextEditingController _catatanController = TextEditingController();
 
-  String? _selectedPartisipan;
-  final List<String> partisipanOptions = ['Semua', 'Tim A', 'Tim B'];
+  final List<String> partisipanOptions = ['Tutus', 'Yobel', 'Jay'];
+  List<String> selectedPartisipan = [];
 
   Future<void> _selectTime() async {
     final TimeOfDay? picked = await showTimePicker(
@@ -29,12 +32,88 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
     }
   }
 
+  void _showPartisipanSelector() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Pilih Partisipan",
+                    style: TextStyle(
+                      fontSize: AppTextSize.headingSmall,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: partisipanOptions.length,
+                    itemBuilder: (context, index) {
+                      String name = partisipanOptions[index];
+                      bool isSelected = selectedPartisipan.contains(name);
+
+                      return CheckboxListTile(
+                        value: isSelected,
+                        onChanged: (value) {
+                          setModalState(() {
+                            if (value == true) {
+                              selectedPartisipan.add(name);
+                            } else {
+                              selectedPartisipan.remove(name);
+                            }
+                          });
+                          setState(() {});
+                        },
+                        title: Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: AppTextSize.bodyMedium,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        secondary: CircleAvatar(
+                          backgroundImage: AssetImage(AppImages.defaultProfile),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'Selesai',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: AppTextSize.bodyMedium,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _submitAgenda() {
-    // TODO: simpan agenda atau kirim ke backend
     print("Kegiatan: ${_kegiatanController.text}");
     print("Waktu: ${_waktuController.text}");
     print("Tempat: ${_tempatController.text}");
-    print("Partisipan: $_selectedPartisipan");
+    print("Partisipan: $selectedPartisipan");
     print("Catatan: ${_catatanController.text}");
   }
 
@@ -42,122 +121,121 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Tambah Agenda',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: AppTextSize.headingSmall,
+            color: AppColors.onPrimary,
+          ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
+          color: AppColors.onPrimary,
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.surface,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Text(
-              "Kegiatan",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 4),
+            _buildTextLabel("Kegiatan"),
             TextField(
               controller: _kegiatanController,
-              decoration: const InputDecoration(
-                hintText: 'Nama Kegiatan',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(hintText: 'Nama Kegiatan'),
             ),
             const SizedBox(height: 16),
-            const Text("Waktu", style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 4),
+            _buildTextLabel("Waktu"),
             TextField(
               controller: _waktuController,
               readOnly: true,
               onTap: _selectTime,
-              decoration: const InputDecoration(
-                hintText: '--:--',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(hintText: '--:--'),
             ),
             const SizedBox(height: 16),
-            const Text("Tempat", style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 4),
+            _buildTextLabel("Tempat"),
             TextField(
               controller: _tempatController,
-              decoration: const InputDecoration(
-                hintText: 'Lokasi',
-                border: OutlineInputBorder(),
+              decoration: const InputDecoration(hintText: 'Lokasi'),
+            ),
+            const SizedBox(height: 16),
+            _buildTextLabel("Partisipan"),
+            GestureDetector(
+              onTap: _showPartisipanSelector,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primary),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  selectedPartisipan.isEmpty
+                      ? "Pilih Partisipan"
+                      : selectedPartisipan.join(', '),
+                  style: TextStyle(
+                    fontSize: AppTextSize.bodyMedium,
+                    color:
+                        selectedPartisipan.isEmpty
+                            ? AppColors.onSecondary
+                            : AppColors.onPrimary,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Partisipan",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 4),
-            DropdownButtonFormField<String>(
-              value: _selectedPartisipan,
-              items:
-                  partisipanOptions.map((option) {
-                    return DropdownMenuItem(value: option, child: Text(option));
-                  }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedPartisipan = value;
-                });
-              },
-              decoration: const InputDecoration(
-                hintText: 'Pilih Partisipan',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Catatan",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            const Text(
-              "*Optional",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 4),
+            _buildTextLabel("Catatan", optional: true),
             TextField(
               controller: _catatanController,
               maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Tambahan',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(hintText: 'Tambahan'),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _submitAgenda,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(
-                    0xFF00ADB5,
-                  ), // ← warna background #00ADB5
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  "Selesai",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white, // ← warna teks putih
-                    fontWeight: FontWeight.w600,
-                  ),
+            ElevatedButton(
+              onPressed: _submitAgenda,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: AppColors.primary,
+              ),
+              child: Text(
+                "Selesai",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: AppTextSize.bodyMedium,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextLabel(String text, {bool optional = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: AppTextSize.bodyLarge,
+              color: AppColors.onPrimary,
+            ),
+          ),
+          if (optional) const SizedBox(width: 6),
+          if (optional)
+            const Text(
+              "*Optional",
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+        ],
       ),
     );
   }
