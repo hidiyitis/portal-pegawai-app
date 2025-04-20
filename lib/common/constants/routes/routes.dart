@@ -7,12 +7,17 @@ class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RoutesName.splashScreen:
-        return MaterialPageRoute(builder: (context) => SplashPage());
-      case RoutesName.loginScreen:
-        return MaterialPageRoute(builder: (context) => LoginPage());
-      case RoutesName.homeScreen:
         return MaterialPageRoute(builder: (context) => HomePage());
-
+      case RoutesName.loginScreen:
+        //   return MaterialPageRoute(builder: (context) => LoginPage());
+        // case RoutesName.homeScreen:
+        return MaterialPageRoute(builder: (context) => HomePage());
+      case RoutesName.pengajuanCuti:
+        return MaterialPageRoute(builder: (context) => PengajuanCutiPage());
+      case RoutesName.formCuti:
+        return MaterialPageRoute(builder: (context) => FormCutiPage());
+      case RoutesName.profileScreen:
+        return MaterialPageRoute(builder: (context) => ProfilePage());
       default:
         return MaterialPageRoute(
           builder:

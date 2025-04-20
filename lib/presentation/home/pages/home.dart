@@ -1,14 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_event.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_state.dart';
+import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
+import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
+import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/agenda_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/attendance_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/header_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/leave_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/pages/calendar/calendar.dart';
+import 'package:portal_pegawai_app/presentation/login/bloc/auth_bloc.dart';
+import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
+import 'package:portal_pegawai_app/presentation/setting/pages/setting.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +26,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(const Duration(minutes: 5), (timer) {
+      context.read<AuthBloc>().add(AuthCheckEvent());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NavigationBloc, NavigationState>(
@@ -40,7 +56,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(IconlyLight.setting),
-                label: 'Settings',
+                label: 'Pengaturan',
               ),
             ],
           ),
@@ -48,33 +64,72 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+}
 
-  Widget _getPage(int index) {
-    switch (index) {
-      case 0:
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                spacing: 24,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HeaderWidget(),
-                  AttendanceWidget(),
-                  AgendaWidget(),
-                  LeaveWidget(),
-                ],
+Widget _getPage(int index) {
+  switch (index) {
+    case 0:
+      return HomePageWidget();
+    case 1:
+      return CalendarScreen();
+    case 2:
+      return SettingPage();
+    default:
+      return Center(child: Text('Page Not Found'));
+  }
+}
+
+class HomePageWidget extends StatelessWidget {
+  const HomePageWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<HomeBloc, HomeState>(
+      listener: (context, state) {
+        if (state is ClockInError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      builder: (context, state) {
+        if (state is HomeDataLoaded) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HeaderWidget(
+                      greeting: state.greeting,
+                      name: state.user?['name'] ?? 'Arshita Hira',
+                      role: state.user?['role'] ?? 'Developer',
+                    ),
+                    const SizedBox(height: 24),
+                    AttendanceWidget(
+                      isClockedIn: state.isClockedIn,
+                      lastClockInPhoto: state.lastClockInPhoto,
+                      lastClockInPosition: state.lastClockInPosition,
+                      onClockIn:
+                          () =>
+                              context.read<HomeBloc>().processClockIn(context),
+                      onClockOut:
+                          () =>
+                              context.read<HomeBloc>().add(ClockOutRequested()),
+                    ),
+                    const SizedBox(height: 24),
+                    AgendaWidget(agendas: state.agendas),
+                    const SizedBox(height: 24),
+                    LeaveWidget(leaveQuota: state.leaveQuota),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      case 1:
-        return const CalendarScreen();
-      case 2:
-        return Center(child: Text('Pengaturan'));
-      default:
-        return Center(child: Text('Page Not Found'));
-    }
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
   }
 }

@@ -48,6 +48,15 @@ class _PasswordFieldWidgetState extends State<PasswordFieldWidget> {
               style: TextStyle(fontSize: AppTextSize.bodySmall),
             ),
           ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Harap masukkan password';
+            }
+            if (value.length < 8) {
+              return 'Password minimal 8 karakter';
+            }
+            return null;
+          },
         ),
       ],
     );
