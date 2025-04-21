@@ -13,6 +13,7 @@ import 'package:portal_pegawai_app/presentation/home/widgets/agenda_widget.dart'
 import 'package:portal_pegawai_app/presentation/home/widgets/attendance_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/header_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/leave_widget.dart';
+import 'package:portal_pegawai_app/presentation/home/pages/calendar/calendar.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_bloc.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
 import 'package:portal_pegawai_app/presentation/setting/pages/setting.dart';
@@ -70,7 +71,7 @@ Widget _getPage(int index) {
     case 0:
       return HomePageWidget();
     case 1:
-      return Center(child: Text('Kalender'));
+      return CalendarScreen();
     case 2:
       return SettingPage();
     default:
