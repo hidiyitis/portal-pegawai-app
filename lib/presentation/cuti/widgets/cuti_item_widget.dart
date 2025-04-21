@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/domain/entities/cuti_entity.dart';
+import 'package:portal_pegawai_app/presentation/cuti/widgets/cuti_detail_bottom_sheet.dart';
 
 class CutiItemWidget extends StatelessWidget {
   final CutiEntity cuti;
@@ -13,7 +14,18 @@ class CutiItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder:
+              (context) => Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: MediaQuery.of(context).size.width * 1,
+                child: CutiDetailBottomSheet(cuti: cuti),
+              ),
+        );
+      },
       child: Container(
         margin: EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
@@ -29,10 +41,9 @@ class CutiItemWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Date indicator
             Container(
-              width: 50,
-              padding: EdgeInsets.symmetric(vertical: 12),
+              width: 120,
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.only(
@@ -40,29 +51,76 @@ class CutiItemWidget extends StatelessWidget {
                   bottomLeft: Radius.circular(8),
                 ),
               ),
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    _extractDay(cuti.tanggal),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: AppTextSize.bodyLarge,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _extractStartDay(cuti.tanggalMulai),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppTextSize.bodyLarge,
+                        ),
+                      ),
+                      Text(
+                        _extractStartMonth(cuti.tanggalMulai),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: AppTextSize.bodySmall,
+                        ),
+                      ),
+                      Text(
+                        _extractStartYear(cuti.tanggalMulai),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: AppTextSize.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      '-',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: AppTextSize.bodySmall,
+                      ),
                     ),
                   ),
-                  Text(
-                    _extractMonth(cuti.tanggal),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: AppTextSize.bodySmall,
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _extractEndDay(cuti.tanggalSelesai),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppTextSize.bodyLarge,
+                        ),
+                      ),
+                      Text(
+                        _extractEndMonth(cuti.tanggalSelesai),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: AppTextSize.bodySmall,
+                        ),
+                      ),
+                      Text(
+                        _extractEndYear(cuti.tanggalSelesai),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: AppTextSize.bodySmall,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-
-            // Content
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(12),
@@ -79,7 +137,7 @@ class CutiItemWidget extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      _getStatusText(cuti.status),
+                      '${_getStatusText(cuti.status)} | Waktu Pengajuan : ${_extractDateHourMinute(cuti.tanggalPengajuan)}',
                       style: TextStyle(
                         color: _getStatusColor(cuti.status),
                         fontSize: AppTextSize.bodySmall,
@@ -89,8 +147,6 @@ class CutiItemWidget extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Detail button
             Padding(
               padding: EdgeInsets.only(right: 12),
               child: Text(
@@ -107,19 +163,64 @@ class CutiItemWidget extends StatelessWidget {
     );
   }
 
-  String _extractDay(String tanggal) {
+  // String _formatTanggal(String mulai, String selesai) {
+  //   // Perubahan format tanggal
+  //   if (mulai == selesai) {
+  //     return mulai;
+  //   } else {
+  //     return '$mulai - $selesai';
+  //   }
+  // }
+
+  String _extractStartDay(String tanggal) {
     try {
-      final parts = tanggal.split(' ');
+      final parts = tanggal.split('/');
       return parts[0];
     } catch (e) {
       return '';
     }
   }
 
-  String _extractMonth(String tanggal) {
+  String _extractStartMonth(String tanggal) {
     try {
-      final parts = tanggal.split(' ');
+      final parts = tanggal.split('/');
       return parts[1];
+    } catch (e) {
+      return '';
+    }
+  }
+
+  String _extractStartYear(String tanggal) {
+    try {
+      final parts = tanggal.split('/');
+      return parts[2];
+    } catch (e) {
+      return '';
+    }
+  }
+
+  String _extractEndDay(String tanggal) {
+    try {
+      final parts = tanggal.split('/');
+      return parts[0];
+    } catch (e) {
+      return '';
+    }
+  }
+
+  String _extractEndMonth(String tanggal) {
+    try {
+      final parts = tanggal.split('/');
+      return parts[1];
+    } catch (e) {
+      return '';
+    }
+  }
+
+  String _extractEndYear(String tanggal) {
+    try {
+      final parts = tanggal.split('/');
+      return parts[2];
     } catch (e) {
       return '';
     }
@@ -145,9 +246,27 @@ class CutiItemWidget extends StatelessWidget {
       case 'disetujui':
         return Colors.green;
       case 'ditolak':
-        return AppColors.onError;
+        return Colors.red;
       default:
         return Colors.grey;
+    }
+  }
+
+  String _extractDateHourMinute(String datetime) {
+    try {
+      final parts = datetime.split(' ');
+      if (parts.length >= 2) {
+        final datePart = parts[0];
+        final timePart = parts[1];
+        final timeParts = timePart.split(':');
+        if (timeParts.length >= 2) {
+          return '$datePart ${timeParts[0]}:${timeParts[1]}';
+        }
+        return datePart;
+      }
+      return datetime;
+    } catch (e) {
+      return datetime;
     }
   }
 }

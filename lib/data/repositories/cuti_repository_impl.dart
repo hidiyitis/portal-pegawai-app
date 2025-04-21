@@ -5,54 +5,20 @@ import 'package:portal_pegawai_app/domain/entities/cuti_entity.dart';
 import 'package:portal_pegawai_app/domain/entities/kuota_cuti_entity.dart';
 import 'package:portal_pegawai_app/domain/entities/manager_entity.dart';
 import 'package:portal_pegawai_app/domain/repositories/cuti_repository.dart';
+import 'package:portal_pegawai_app/core/errors/error.dart';
 
 class CutiRepositoryImpl implements CutiRepository {
-  // Dummy data untuk sementara
   final List<CutiModel> _daftarCuti = [
+    // data fek, dummy
     CutiModel(
       id: 1,
-      kegiatan: 'Cuti Menikah?',
-      tanggal: '1 Maret 2025',
+      kegiatan: 'Cuti Menikah',
+      tanggalMulai: '10/09/2024',
+      tanggalSelesai: '12/09/2024',
       managerId: 1,
       managerNama: 'Budi Santoso',
-      catatan: 'Acara pernikahan',
       status: 'disetujui',
-    ),
-    CutiModel(
-      id: 2,
-      kegiatan: 'Cuti Menikah?',
-      tanggal: '2 Maret 2025',
-      managerId: 1,
-      managerNama: 'Budi Santoso',
-      catatan: 'Acara pernikahan',
-      status: 'disetujui',
-    ),
-    CutiModel(
-      id: 3,
-      kegiatan: 'Cuti Menikah?',
-      tanggal: '3 Maret 2025',
-      managerId: 1,
-      managerNama: 'Budi Santoso',
-      catatan: 'Acara pernikahan',
-      status: 'disetujui',
-    ),
-    CutiModel(
-      id: 4,
-      kegiatan: 'Cuti Sakit',
-      tanggal: '5 Maret 2025',
-      managerId: 2,
-      managerNama: 'Dewi Pratiwi',
-      catatan: 'Harus kontrol ke dokter',
-      status: 'dalam_pengajuan',
-    ),
-    CutiModel(
-      id: 5,
-      kegiatan: 'Cuti Melahirkan',
-      tanggal: '10 Maret 2025',
-      managerId: 3,
-      managerNama: 'Andi Wijaya',
-      catatan: 'Persiapan melahirkan',
-      status: 'ditolak',
+      tanggalPengajuan: DateTime.now().toString(),
     ),
   ];
 
@@ -69,43 +35,82 @@ class CutiRepositoryImpl implements CutiRepository {
     ManagerModel(id: 3, nama: 'Andi Wijaya', jabatan: 'Kepala Keuangan'),
   ];
 
+  final List<DateTime> _publicHolidays = [
+    DateTime(2024, 8, 17),
+    DateTime(2024, 12, 25),
+  ];
+
   @override
   Future<List<CutiEntity>> getDaftarCuti() async {
-    await Future.delayed(
-      Duration(milliseconds: 500),
-    ); // Simulasi delay jaringan
+    await Future.delayed(Duration(milliseconds: 500));
     return _daftarCuti;
   }
 
   @override
   Future<KuotaCutiEntity> getKuotaCuti() async {
-    await Future.delayed(
-      Duration(milliseconds: 300),
-    ); // Simulasi delay jaringan
+    await Future.delayed(Duration(milliseconds: 300));
     return _kuotaCuti;
   }
 
   @override
   Future<List<ManagerEntity>> getDaftarManager() async {
-    await Future.delayed(
-      Duration(milliseconds: 300),
-    ); // Simulasi delay jaringan
+    await Future.delayed(Duration(milliseconds: 300));
     return _daftarManager;
   }
 
   @override
   Future<CutiEntity> ajukanCuti({
     required String kegiatan,
-    required String tanggal,
+    required String tanggalMulai,
+    required String tanggalSelesai,
     required int managerId,
     String? lampiran,
     String? catatan,
   }) async {
-    await Future.delayed(
-      Duration(milliseconds: 800),
-    ); // Simulasi delay jaringan
+    await Future.delayed(Duration(seconds: 2));
 
-    // Temukan manager berdasarkan ID
+    final startDate = _parseTanggal(tanggalMulai);
+    final endDate = _parseTanggal(tanggalSelesai);
+
+    if (startDate == null || endDate == null) {
+      throw ValidationFailure(message: 'Format tanggal tidak valid');
+    }
+
+    if (startDate.isAfter(endDate)) {
+      throw ValidationFailure(
+        message: 'Tanggal mulai tidak boleh setelah tanggal selesai',
+      );
+    }
+
+    final conflictingCuti =
+        _daftarCuti.where((cuti) {
+          final cutiStart = _parseTanggal(cuti.tanggalMulai);
+          final cutiEnd = _parseTanggal(cuti.tanggalSelesai);
+          return _tanggalBertabrakan(startDate, endDate, cutiStart!, cutiEnd!);
+        }).toList();
+
+    if (conflictingCuti.isNotEmpty) {
+      throw ValidationFailure(
+        message: 'Tanggal cuti bertabrakan dengan pengajuan sebelumnya',
+      );
+    }
+
+    int daysCount = 0;
+    DateTime currentDate = startDate;
+
+    while (currentDate.isBefore(endDate) || currentDate == endDate) {
+      if (currentDate.weekday != 6 && currentDate.weekday != 7) {
+        if (!_publicHolidays.contains(currentDate)) {
+          daysCount++;
+        }
+      }
+      currentDate = currentDate.add(Duration(days: 1));
+    }
+
+    if (_kuotaCuti.dalamPengajuan + daysCount > _kuotaCuti.total) {
+      throw ValidationFailure(message: 'Kuota cuti tidak mencukupi');
+    }
+
     final manager = _daftarManager.firstWhere(
       (manager) => manager.id == managerId,
       orElse: () => _daftarManager[0],
@@ -115,24 +120,47 @@ class CutiRepositoryImpl implements CutiRepository {
     final newCuti = CutiModel(
       id: newId,
       kegiatan: kegiatan,
-      tanggal: tanggal,
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
       managerId: managerId,
       managerNama: manager.nama,
       lampiran: lampiran,
       catatan: catatan,
       status: 'dalam_pengajuan',
+      tanggalPengajuan: DateTime.now().toString(),
     );
 
     _daftarCuti.add(newCuti);
 
-    // Update kuota cuti
     _kuotaCuti = KuotaCutiModel(
       total: _kuotaCuti.total,
-      dalamPengajuan: _kuotaCuti.dalamPengajuan + 1,
+      dalamPengajuan: _kuotaCuti.dalamPengajuan + daysCount,
       ditolak: _kuotaCuti.ditolak,
       disetujui: _kuotaCuti.disetujui,
     );
 
     return newCuti;
+  }
+
+  DateTime? _parseTanggal(String tanggal) {
+    try {
+      final parts = tanggal.split('/');
+      return DateTime(
+        int.parse(parts[2]),
+        int.parse(parts[1]),
+        int.parse(parts[0]),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool _tanggalBertabrakan(
+    DateTime newStart,
+    DateTime newEnd,
+    DateTime existingStart,
+    DateTime existingEnd,
+  ) {
+    return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
   }
 }

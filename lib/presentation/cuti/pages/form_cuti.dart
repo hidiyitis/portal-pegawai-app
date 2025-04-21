@@ -17,7 +17,8 @@ class FormCutiPage extends StatefulWidget {
 class _FormCutiPageState extends State<FormCutiPage> {
   final _formKey = GlobalKey<FormState>();
   final _kegiatanController = TextEditingController();
-  final _tanggalController = TextEditingController();
+  final _tanggalMulaiController = TextEditingController();
+  final _tanggalSelesaiController = TextEditingController();
   final _catatanController = TextEditingController();
 
   ManagerEntity? _selectedManager;
@@ -28,7 +29,8 @@ class _FormCutiPageState extends State<FormCutiPage> {
   @override
   void dispose() {
     _kegiatanController.dispose();
-    _tanggalController.dispose();
+    _tanggalMulaiController.dispose();
+    _tanggalSelesaiController.dispose();
     _catatanController.dispose();
     super.dispose();
   }
@@ -37,6 +39,8 @@ class _FormCutiPageState extends State<FormCutiPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.onPrimary,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -113,7 +117,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Kegiatan
             Text(
               'Kegiatan',
               style: TextStyle(
@@ -138,9 +141,8 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Tanggal
             Text(
-              'Tanggal',
+              'Tanggal Mulai Cuti',
               style: TextStyle(
                 color: AppColors.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -149,7 +151,7 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 8),
             TextFormField(
-              controller: _tanggalController,
+              controller: _tanggalMulaiController,
               decoration: InputDecoration(
                 hintText: 'DD/MM/YYYY',
                 border: OutlineInputBorder(),
@@ -164,21 +166,59 @@ class _FormCutiPageState extends State<FormCutiPage> {
                 );
                 if (date != null) {
                   setState(() {
-                    _tanggalController.text =
+                    _tanggalMulaiController.text =
                         '${date.day}/${date.month}/${date.year}';
                   });
                 }
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Tanggal tidak boleh kosong';
+                  return 'Tanggal mulai tidak boleh kosong';
                 }
                 return null;
               },
             ),
             SizedBox(height: 16),
 
-            // Manager
+            Text(
+              'Tanggal Selesai Cuti',
+              style: TextStyle(
+                color: AppColors.onPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: AppTextSize.bodyMedium,
+              ),
+            ),
+            SizedBox(height: 8),
+            TextFormField(
+              controller: _tanggalSelesaiController,
+              decoration: InputDecoration(
+                hintText: 'DD/MM/YYYY',
+                border: OutlineInputBorder(),
+              ),
+              readOnly: true,
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(Duration(days: 365)),
+                );
+                if (date != null) {
+                  setState(() {
+                    _tanggalSelesaiController.text =
+                        '${date.day}/${date.month}/${date.year}';
+                  });
+                }
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Tanggal selesai tidak boleh kosong';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16),
+
             Text(
               'Manager',
               style: TextStyle(
@@ -215,7 +255,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Lampiran
             Text(
               'Lampiran',
               style: TextStyle(
@@ -236,7 +275,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             SizedBox(height: 8),
             InkWell(
               onTap: () {
-                // TODO: Implement file picking
                 setState(() {
                   _selectedLampiran = 'lampiran.pdf';
                 });
@@ -277,7 +315,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 16),
 
-            // Catatan
             Text(
               'Catatan',
               style: TextStyle(
@@ -306,7 +343,6 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 32),
 
-            // Button Selesai
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -342,7 +378,8 @@ class _FormCutiPageState extends State<FormCutiPage> {
 
       _cutiCubit.ajukanCuti(
         kegiatan: _kegiatanController.text,
-        tanggal: _tanggalController.text,
+        tanggalMulai: _tanggalMulaiController.text,
+        tanggalSelesai: _tanggalSelesaiController.text,
         managerId: _selectedManager!.id,
         lampiran: _selectedLampiran,
         catatan:

@@ -12,7 +12,6 @@ class CutiInitial extends CutiState {}
 
 class CutiLoading extends CutiState {}
 
-// Replacement for KuotaCutiLoaded and DaftarCutiLoaded - combined state
 class CutiDataLoaded extends CutiState {
   final KuotaCutiEntity kuotaCuti;
   final List<CutiEntity> daftarCuti;
@@ -26,26 +25,6 @@ class CutiDataLoaded extends CutiState {
 
   @override
   List<Object?> get props => [kuotaCuti, daftarCuti, filter];
-}
-
-// Keep these for backward compatibility
-class KuotaCutiLoaded extends CutiState {
-  final KuotaCutiEntity kuotaCuti;
-
-  KuotaCutiLoaded(this.kuotaCuti);
-
-  @override
-  List<Object?> get props => [kuotaCuti];
-}
-
-class DaftarCutiLoaded extends CutiState {
-  final List<CutiEntity> daftarCuti;
-  final String filter;
-
-  DaftarCutiLoaded(this.daftarCuti, this.filter);
-
-  @override
-  List<Object?> get props => [daftarCuti, filter];
 }
 
 class DaftarManagerLoaded extends CutiState {
