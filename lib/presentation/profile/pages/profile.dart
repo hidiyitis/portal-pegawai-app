@@ -14,6 +14,21 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppColors.onPrimary,
+        title: Text(
+          'Profil',
+          style: TextStyle(
+            fontSize: AppTextSize.headingSmall,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SafeArea(
         child: BlocProvider(
           create: (context) => ProfileBloc()..add(LoadProfile()),

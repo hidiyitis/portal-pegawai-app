@@ -11,12 +11,12 @@ class AgendaTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: agenda.color.withOpacity(0.1),
+        // color: agenda.color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.onSurface),
+        border: Border.all(color: AppColors.background),
       ),
       child: Row(
         children: [
@@ -25,7 +25,6 @@ class AgendaTile extends StatelessWidget {
             backgroundColor: agenda.color,
             child: Text(
               agenda.dateLabel,
-
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 10,
@@ -34,7 +33,7 @@ class AgendaTile extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

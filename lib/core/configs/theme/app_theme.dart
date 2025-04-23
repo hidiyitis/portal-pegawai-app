@@ -52,5 +52,62 @@ class AppTheme {
     progressIndicatorTheme: ProgressIndicatorThemeData(
       color: AppColors.primary,
     ),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: Colors.white,
+      headerBackgroundColor: AppColors.primary,
+      headerForegroundColor: Colors.white,
+      dayBackgroundColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      todayBackgroundColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      dayStyle: TextStyle(color: AppColors.onPrimary),
+      yearStyle: TextStyle(color: AppColors.onPrimary),
+      weekdayStyle: TextStyle(color: AppColors.onPrimary),
+      dividerColor: AppColors.primary,
+      cancelButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+      confirmButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+    ),
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: Colors.white,
+      hourMinuteColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? Colors.white
+            : AppColors.onPrimary;
+      }),
+      dayPeriodColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? Colors.white
+            : AppColors.onPrimary;
+      }),
+      dialHandColor: AppColors.primary,
+      dialBackgroundColor: Colors.white,
+      entryModeIconColor: AppColors.primary,
+      cancelButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+      confirmButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+    ),
   );
 }

@@ -43,6 +43,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       // final auth = await authRepository.login(event.nip, event.password);
       // await authRepository.cacheAuthData(auth);
+      if (event.nip != event.password) {
+        emit(AuthUnauthenticated('NIP dan Password tidak seseuai'));
+        return;
+      }
       emit(AuthAuthenticated());
     } catch (e) {
       emit(AuthUnauthenticated(e.toString()));

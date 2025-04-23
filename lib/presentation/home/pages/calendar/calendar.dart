@@ -16,27 +16,35 @@ class CalendarScreen extends StatelessWidget {
         title: 'Sprint Planning 10',
         subtitle: 'Ruang Meeting 10',
         time: '10.30 AM',
-        color: Colors.teal,
+        color: AppColors.primary,
         dateLabel: '1\nMar',
       ),
       AgendaModel(
         title: 'Cuti Menikah',
         subtitle: 'Cuti',
         time: '',
-        color: Colors.redAccent,
+        color: AppColors.onError,
         dateLabel: '2\nMar',
       ),
     ];
 
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CalendarHeader(),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Text(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          spacing: 12,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Kalender',
+              style: TextStyle(
+                color: AppColors.onPrimary,
+                fontSize: AppTextSize.headingSmall,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const CalendarHeader(),
+            Text(
               'Agenda',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -44,47 +52,49 @@ class CalendarScreen extends StatelessWidget {
                 color: AppColors.onPrimary,
               ),
             ),
-          ),
-          Center(
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddAgendaScreen(),
+            Center(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddAgendaScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Tambah Agenda'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 32,
+                    ),
+                    textStyle: TextStyle(
+                      fontSize: AppTextSize.bodyLarge,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(width: 1, color: AppColors.primary),
+                    ),
                   ),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Tambah Agenda'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 32,
-                ),
-                textStyle: TextStyle(
-                  fontSize: AppTextSize.bodyLarge,
-                  fontWeight: FontWeight.w600,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: agendas.length,
-              itemBuilder: (context, index) {
-                return AgendaTile(agenda: agendas[index]);
-              },
+            Expanded(
+              child: ListView.builder(
+                itemCount: agendas.length,
+                itemBuilder: (context, index) {
+                  return AgendaTile(agenda: agendas[index]);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

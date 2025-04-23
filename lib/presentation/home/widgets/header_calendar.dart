@@ -23,6 +23,12 @@ class _CalendarHeaderState extends State<CalendarHeader> {
     'Jum',
     'Sab',
   ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _selectedDate = DateTime.now();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +90,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
       children: [
         const SizedBox(height: 16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
               onPressed: () {
@@ -95,15 +101,26 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                   );
                 });
               },
-              icon: const Icon(Icons.chevron_left, color: AppColors.primary),
+              icon: const Icon(Icons.chevron_left, color: AppColors.onPrimary),
             ),
-            Text(
-              DateFormat.yMMMM('id_ID').format(_focusedMonth),
-              style: TextStyle(
-                fontSize: AppTextSize.bodyLarge,
-                fontWeight: FontWeight.w600,
-                color: AppColors.onPrimary,
-              ),
+            Column(
+              children: [
+                Text(
+                  DateFormat.MMMM('id_ID').format(_focusedMonth),
+                  style: TextStyle(
+                    fontSize: AppTextSize.bodyLarge,
+                    color: AppColors.onPrimary,
+                  ),
+                ),
+                Text(
+                  DateFormat.y('id_ID').format(_focusedMonth),
+                  style: TextStyle(
+                    fontSize: AppTextSize.bodyMedium,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.onPrimary,
+                  ),
+                ),
+              ],
             ),
             IconButton(
               onPressed: () {
@@ -114,7 +131,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                   );
                 });
               },
-              icon: const Icon(Icons.chevron_right, color: AppColors.primary),
+              icon: const Icon(Icons.chevron_right, color: AppColors.onPrimary),
             ),
           ],
         ),
