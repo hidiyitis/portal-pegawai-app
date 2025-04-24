@@ -81,12 +81,15 @@ class _FormCutiPageState extends State<FormCutiPage> {
               });
             }
           },
+
           builder: (context, state) {
             if (state is DaftarManagerLoaded) {
               return _buildForm(context, state.daftarManager);
-            } else if (state is CutiLoading) {
-              return Center(child: CircularProgressIndicator());
-            } else if (state is FormCutiError) {
+            }
+            // else if (state is CutiLoading) {
+            //   return Center(child: CircularProgressIndicator());
+            // }
+            else if (state is FormCutiError) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -101,7 +104,8 @@ class _FormCutiPageState extends State<FormCutiPage> {
                 ),
               );
             } else {
-              return Center(child: CircularProgressIndicator());
+              // return Center(child: CircularProgressIndicator());
+              return _buildForm(context, []);
             }
           },
         ),
@@ -352,16 +356,16 @@ class _FormCutiPageState extends State<FormCutiPage> {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: _isLoading ? null : () => _submitForm(context),
-                child:
-                    _isLoading
-                        ? CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                          'Selesai',
-                          style: TextStyle(
-                            fontSize: AppTextSize.bodyLarge,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                child
+                    // _isLoading
+                    //     ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                  'Selesai',
+                  style: TextStyle(
+                    fontSize: AppTextSize.bodyLarge,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
@@ -372,19 +376,30 @@ class _FormCutiPageState extends State<FormCutiPage> {
 
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      // setState(() {
+      //   _isLoading = true;
+      // });
 
-      _cutiCubit.ajukanCuti(
-        kegiatan: _kegiatanController.text,
-        tanggalMulai: _tanggalMulaiController.text,
-        tanggalSelesai: _tanggalSelesaiController.text,
-        managerId: _selectedManager!.id,
-        lampiran: _selectedLampiran,
-        catatan:
-            _catatanController.text.isNotEmpty ? _catatanController.text : null,
+      // Print data to terminal instead of sending
+      print('Submit data:');
+      print('Kegiatan: ${_kegiatanController.text}');
+      print('Tanggal Mulai: ${_tanggalMulaiController.text}');
+      print('Tanggal Selesai: ${_tanggalSelesaiController.text}');
+      print('Manager ID: ${_selectedManager!.id}');
+      print('Lampiran: $_selectedLampiran');
+      print(
+        'Catatan: ${_catatanController.text.isNotEmpty ? _catatanController.text : "null"}',
       );
+
+      // _cutiCubit.ajukanCuti(
+      //   kegiatan: _kegiatanController.text,
+      //   tanggalMulai: _tanggalMulaiController.text,
+      //   tanggalSelesai: _tanggalSelesaiController.text,
+      //   managerId: _selectedManager!.id,
+      //   lampiran: _selectedLampiran,
+      //   catatan:
+      //       _catatanController.text.isNotEmpty ? _catatanController.text : null,
+      // );
     }
   }
 }

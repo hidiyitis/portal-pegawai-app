@@ -4,6 +4,7 @@ import 'package:portal_pegawai_app/common/constants/routes/routes_name.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/domain/entities/cuti_entity.dart';
+import 'package:portal_pegawai_app/domain/entities/kuota_cuti_entity.dart';
 import 'package:portal_pegawai_app/presentation/cuti/bloc/cuti_cubit.dart';
 import 'package:portal_pegawai_app/presentation/cuti/bloc/cuti_state.dart';
 import 'package:portal_pegawai_app/presentation/cuti/widgets/cuti_item_widget.dart';
@@ -21,11 +22,27 @@ class PengajuanCutiPage extends StatefulWidget {
 class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
   String _currentFilter = 'semua';
   late CutiCubit _cutiCubit;
+  KuotaCutiEntity? _kuotaCuti;
+  List<CutiEntity>? _daftarCuti;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _currentFilter = 'semua';
+    _cutiCubit = CutiCubit(cutiRepository: getIt());
+    _loadData();
+  }
+
+  void _loadData() {
+    setState(() {
+      _isLoading = true;
+    });
+    _cutiCubit.loadAllData(filter: _currentFilter).then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -46,89 +63,67 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
           ),
         ),
       ),
-      body: BlocProvider<CutiCubit>(
-        create: (context) {
-          _cutiCubit = CutiCubit(cutiRepository: getIt());
-          _cutiCubit.loadAllData(filter: _currentFilter);
-          return _cutiCubit;
+      body: BlocBuilder<CutiCubit, CutiState>(
+        bloc: _cutiCubit,
+        builder: (context, state) {
+          if (state is CutiDataLoaded) {
+            _kuotaCuti = state.kuotaCuti;
+            _daftarCuti = state.daftarCuti;
+          }
+          return Column(
+            children: [
+              KuotaCutiCardWidget(
+                kuotaTotal: _kuotaCuti?.total ?? 0,
+                dalamPengajuan: _kuotaCuti?.dalamPengajuan ?? 0,
+                ditolak: _kuotaCuti?.ditolak ?? 0,
+                disetujui: _kuotaCuti?.disetujui ?? 0,
+                onAjukanPressed: () {
+                  Navigator.of(context).pushNamed(RoutesName.formCuti).then((
+                    _,
+                  ) {
+                    _loadData();
+                  });
+                },
+              ),
+              StatusFilterWidget(
+                currentFilter: _currentFilter,
+                onFilterChanged: (filter) {
+                  setState(() {
+                    _currentFilter = filter;
+                  });
+                  _loadData();
+                },
+              ),
+              Expanded(child: _buildCutiList()),
+            ],
+          );
         },
-        child: BlocBuilder<CutiCubit, CutiState>(
-          builder: (context, state) {
-            if (state is CutiLoading) {
-              return Center(child: CircularProgressIndicator());
-            } else if (state is FormCutiError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Error: ${state.message}'),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed:
-                          () => _cutiCubit.loadAllData(filter: _currentFilter),
-                      child: Text('Coba Lagi'),
-                    ),
-                  ],
-                ),
-              );
-            } else if (state is CutiDataLoaded) {
-              return _buildContent(
-                context,
-                state.kuotaCuti.total,
-                state.kuotaCuti.dalamPengajuan,
-                state.kuotaCuti.ditolak,
-                state.kuotaCuti.disetujui,
-                state.daftarCuti,
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
       ),
     );
   }
 
-  Widget _buildContent(
-    BuildContext context,
-    int kuotaTotal,
-    int dalamPengajuan,
-    int ditolak,
-    int disetujui,
-    List<CutiEntity> daftarCuti,
-  ) {
-    return Column(
-      children: [
-        KuotaCutiCardWidget(
-          kuotaTotal: kuotaTotal,
-          dalamPengajuan: dalamPengajuan,
-          ditolak: ditolak,
-          disetujui: disetujui,
-          onAjukanPressed: () {
-            Navigator.of(context).pushNamed(RoutesName.formCuti).then((_) {
-              _cutiCubit.loadAllData(filter: _currentFilter);
-            });
-          },
-        ),
-
-        StatusFilterWidget(
-          currentFilter: _currentFilter,
-          onFilterChanged: (filter) {
-            setState(() {
-              _currentFilter = filter;
-            });
-            _cutiCubit.loadAllData(filter: _currentFilter);
-          },
-        ),
-
-        Expanded(
-          child:
-              daftarCuti.isEmpty
-                  ? _buildEmptyState()
-                  : _buildCutiList(daftarCuti),
-        ),
-      ],
-    );
+  Widget _buildCutiList() {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    } else if (_daftarCuti == null || _daftarCuti!.isEmpty) {
+      return _buildEmptyState();
+    } else {
+      return ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: _daftarCuti!.length,
+        itemBuilder: (context, index) {
+          final cuti = _daftarCuti![index];
+          return CutiItemWidget(
+            cuti: cuti,
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Detail untuk cuti ID: ${cuti.id}')),
+              );
+            },
+          );
+        },
+      );
+    }
   }
 
   Widget _buildEmptyState() {
@@ -159,24 +154,6 @@ class _PengajuanCutiPageState extends State<PengajuanCutiPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCutiList(List<CutiEntity> daftarCuti) {
-    return ListView.builder(
-      padding: EdgeInsets.all(16),
-      itemCount: daftarCuti.length,
-      itemBuilder: (context, index) {
-        final cuti = daftarCuti[index];
-        return CutiItemWidget(
-          cuti: cuti,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Detail untuk cuti ID: ${cuti.id}')),
-            );
-          },
-        );
-      },
     );
   }
 }
