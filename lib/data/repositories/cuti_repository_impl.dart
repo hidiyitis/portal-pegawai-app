@@ -20,6 +20,16 @@ class CutiRepositoryImpl implements CutiRepository {
       status: 'disetujui',
       tanggalPengajuan: DateTime.now().toString(),
     ),
+    CutiModel(
+      id: 2,
+      kegiatan: 'Cuti Sakit',
+      tanggalMulai: '11/08/2024',
+      tanggalSelesai: '12/09/2024',
+      managerId: 1,
+      managerNama: 'Budi Santoso',
+      status: 'dalam_pengajuan',
+      tanggalPengajuan: DateTime.now().toString(),
+    ),
   ];
 
   KuotaCutiModel _kuotaCuti = KuotaCutiModel(
