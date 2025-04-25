@@ -15,7 +15,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         foregroundColor: AppColors.onPrimary,
         title: Text(
           'Profil',
@@ -31,44 +31,46 @@ class ProfilePage extends StatelessWidget {
       ),
       body: SafeArea(
         child: BlocProvider(
+          lazy: false,
           create: (context) => ProfileBloc()..add(LoadProfile()),
-          child: BlocConsumer<ProfileBloc, ProfileState>(
-            listener: (context, state) {
-              if (state is ProfileError) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.message)));
-              }
-            },
-            builder: (context, state) {
-              if (state is ProfileLoaded || state is ProfileUpdating) {
-                final profile =
-                    state is ProfileUpdating
-                        ? state.previousState
-                        : state as ProfileLoaded;
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      spacing: 16,
-                      children: [
-                        ProfilePictureWidget(
-                          imageFile: profile.profilePicture,
-                          isLoading: state is ProfileUpdating,
-                        ),
-                        _buildProfileInfo(profile),
-                        const PasswordForm(),
-                      ],
-                    ),
-                  ),
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
+          child: _profilePageContent(),
         ),
       ),
+    );
+  }
+
+  BlocConsumer<ProfileBloc, ProfileState> _profilePageContent() {
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      builder: (context, state) {
+        if (state is ProfileLoaded || state is ProfileUpdating) {
+          final profile =
+              state is ProfileUpdating
+                  ? state.previousState
+                  : state as ProfileLoaded;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              spacing: 16,
+              children: [
+                ProfilePictureWidget(
+                  imageUrl: profile.imageUrl,
+                  isLoading: state is ProfileUpdating,
+                ),
+                _buildProfileInfo(profile),
+                const PasswordForm(),
+              ],
+            ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 

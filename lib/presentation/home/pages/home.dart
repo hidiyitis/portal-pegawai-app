@@ -38,27 +38,35 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<NavigationBloc, NavigationState>(
       builder: (context, state) {
-        return Scaffold(
-          body: _getPage(state.tabIndex),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: state.tabIndex,
-            onTap: (index) {
-              context.read<NavigationBloc>().add(NavigationTabChanged(index));
-            },
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.calendar),
-                label: 'Kalender',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IconlyLight.setting),
-                label: 'Pengaturan',
-              ),
-            ],
+        return PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (!didPop && state.tabIndex != 0) {
+              context.read<NavigationBloc>().add(NavigationTabChanged(0));
+            }
+          },
+          child: Scaffold(
+            body: _getPage(state.tabIndex),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: state.tabIndex,
+              onTap: (index) {
+                context.read<NavigationBloc>().add(NavigationTabChanged(index));
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(IconlyLight.home),
+                  label: 'Beranda',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(IconlyLight.calendar),
+                  label: 'Kalender',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(IconlyLight.setting),
+                  label: 'Pengaturan',
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -97,7 +105,10 @@ class HomePageWidget extends StatelessWidget {
           return SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

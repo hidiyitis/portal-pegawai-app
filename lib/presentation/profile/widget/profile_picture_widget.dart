@@ -1,19 +1,22 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:portal_pegawai_app/core/configs/assets/app_images.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_bloc.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
+import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
 
 class ProfilePictureWidget extends StatelessWidget {
-  final File? imageFile;
+  final String? imageUrl;
   final bool isLoading;
 
   const ProfilePictureWidget({
     super.key,
-    this.imageFile,
+    this.imageUrl,
     required this.isLoading,
   });
 
@@ -26,9 +29,9 @@ class ProfilePictureWidget extends StatelessWidget {
           radius: 60,
           backgroundColor: Colors.grey[300],
           backgroundImage:
-              imageFile != null
-                  ? FileImage(imageFile!)
-                  : const AssetImage('assets/images/profile.jpg'),
+              imageUrl != ''
+                  ? CachedNetworkImageProvider(imageUrl!)
+                  : AssetImage(AppImages.defaultProfile),
           child: isLoading ? const CircularProgressIndicator() : null,
         ),
         Positioned(
@@ -45,29 +48,45 @@ class ProfilePictureWidget extends StatelessWidget {
   }
 
   void _showImageSourceDialog(BuildContext context) {
+    final profileState = context.read<ProfileBloc>().state;
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: const Text('Pilih Sumber Foto'),
+          (dialogContext) => AlertDialog(
+            title: const Text(
+              'Pilih Sumber Foto',
+              style: TextStyle(color: AppColors.onPrimary),
+            ),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  context.read<ProfileBloc>().add(
-                    UpdateProfilePicture(source: ImageSource.camera),
-                  );
+                  final currentState = context.read<ProfileBloc>().state;
+                  if (currentState is ProfileLoaded) {
+                    context.read<ProfileBloc>().add(
+                      UpdateProfilePicture(source: ImageSource.camera),
+                    );
+                  }
                 },
-                child: const Text('Kamera'),
+                child: const Text(
+                  'Kamera',
+                  style: TextStyle(color: AppColors.primary),
+                ),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  context.read<ProfileBloc>().add(
-                    UpdateProfilePicture(source: ImageSource.gallery),
-                  );
+                  final profileState = context.read<ProfileBloc>().state;
+                  if (profileState is ProfileLoaded) {
+                    context.read<ProfileBloc>().add(
+                      UpdateProfilePicture(source: ImageSource.gallery),
+                    );
+                  }
                 },
-                child: const Text('Galeri'),
+                child: const Text(
+                  'Galeri',
+                  style: TextStyle(color: AppColors.primary),
+                ),
               ),
             ],
           ),

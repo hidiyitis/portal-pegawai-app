@@ -30,7 +30,7 @@ class CalendarScreen extends StatelessWidget {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           spacing: 12,
           crossAxisAlignment: CrossAxisAlignment.start,

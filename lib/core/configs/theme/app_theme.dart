@@ -33,6 +33,11 @@ class AppTheme {
         borderRadius: BorderRadius.circular(8),
         borderSide: BorderSide(color: AppColors.primary),
       ),
+      counterStyle: TextStyle(color: AppColors.primary),
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: AppColors.primary,
+      selectionHandleColor: AppColors.primary,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -108,6 +113,16 @@ class AppTheme {
       confirmButtonStyle: TextButton.styleFrom(
         foregroundColor: AppColors.primary,
       ),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.white),
+    popupMenuTheme: PopupMenuThemeData(color: Colors.white),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.blue; // Selected color
+        }
+        return Colors.transparent; // Unselected color
+      }),
     ),
   );
 }

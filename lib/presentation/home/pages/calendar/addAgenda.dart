@@ -62,7 +62,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                     itemBuilder: (context, index) {
                       String name = partisipanOptions[index];
                       bool isSelected = selectedPartisipan.contains(name);
-
                       return CheckboxListTile(
                         value: isSelected,
                         onChanged: (value) {
@@ -89,14 +88,17 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                     },
                   ),
                   const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Selesai',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: AppTextSize.bodyMedium,
-                        fontWeight: FontWeight.w500,
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text(
+                        'Selesai',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: AppTextSize.bodyMedium,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

@@ -34,7 +34,7 @@ class HeaderWidget extends StatelessWidget {
                         'Selamat ${state.greeting}',
                         style: TextStyle(
                           color: AppColors.primary,
-                          fontSize: AppTextSize.headingSmall,
+                          fontSize: AppTextSize.headingMedium,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -47,7 +47,7 @@ class HeaderWidget extends StatelessWidget {
                               state.user?['name'] ?? 'Arshita Hira',
                               style: TextStyle(
                                 color: AppColors.onPrimary,
-                                fontSize: AppTextSize.headingSmall,
+                                fontSize: AppTextSize.headingMedium,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -57,7 +57,7 @@ class HeaderWidget extends StatelessWidget {
                                 state.user?['role'] ?? 'Developer',
                                 style: TextStyle(
                                   color: AppColors.onSurface,
-                                  fontSize: AppTextSize.bodyLarge,
+                                  fontSize: AppTextSize.headingSmall,
                                 ),
                               ),
                             ),
@@ -110,17 +110,18 @@ class HeaderWidget extends StatelessWidget {
                         onTap:
                             () => Navigator.pushNamed(
                               context,
-                              RoutesName.loginScreen,
+                              RoutesName.profileScreen,
                             ),
-                        child: ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: state.user?['photoUrl'] ?? '',
-                            placeholder:
-                                (context, url) => _buildPlaceholder(context),
-                            errorWidget:
-                                (context, url, error) =>
-                                    _buildPlaceholder(context),
-                            fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  state.user?['photoUrl'] ??
+                                  'https://picsum.photos/200',
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -135,18 +136,4 @@ class HeaderWidget extends StatelessWidget {
       },
     );
   }
-}
-
-Widget _buildPlaceholder(BuildContext context) {
-  return GestureDetector(
-    onTap: () => Navigator.pushNamed(context, RoutesName.profileScreen),
-    child: Container(
-      height: 64,
-      width: 64,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(image: AssetImage(AppImages.defaultProfile)),
-      ),
-    ),
-  );
 }

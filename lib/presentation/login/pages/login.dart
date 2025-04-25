@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         color: AppColors.primary,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppTextSize.headingMedium,
+                        fontSize: AppTextSize.headingLarge,
                       ),
                     ),
                     Text(
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         color: AppColors.onSurface,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppTextSize.headingSmall,
+                        fontSize: AppTextSize.headingMedium,
                       ),
                     ),
                     SizedBox(height: 64),

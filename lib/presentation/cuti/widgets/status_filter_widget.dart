@@ -17,7 +17,7 @@ class StatusFilterWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 16),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 24),
         child: Row(
           children: [
             _buildFilterChip('Semua', 'semua'),

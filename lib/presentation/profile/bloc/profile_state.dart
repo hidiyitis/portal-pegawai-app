@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 
 abstract class ProfileState extends Equatable {
@@ -19,16 +17,12 @@ class ProfileLoading extends ProfileState {
 class ProfileLoaded extends ProfileState {
   final String name;
   final String email;
-  final File? profilePicture;
+  final String? imageUrl;
 
-  const ProfileLoaded({
-    required this.name,
-    required this.email,
-    this.profilePicture,
-  });
+  const ProfileLoaded({required this.name, required this.email, this.imageUrl});
 
   @override
-  List<Object?> get props => [name, email, profilePicture];
+  List<Object?> get props => [name, email, imageUrl];
 }
 
 class ProfileUpdating extends ProfileState {

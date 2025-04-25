@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -40,13 +41,15 @@ class _SettingView extends StatelessWidget {
         },
         builder: (context, state) {
           final userData = state is UserDataLoaded ? state.userData : null;
-
           return Scaffold(
             body: Column(
               spacing: 24,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     spacing: 16,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,13 +98,15 @@ class _SettingView extends StatelessWidget {
                                   context,
                                   RoutesName.profileScreen,
                                 ),
-                            child: Container(
-                              height: 64,
+                            child: SizedBox(
                               width: 64,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage(AppImages.defaultProfile),
+                              height: 64,
+                              child: ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      userData?['photoUrl'] ??
+                                      'https://picsum.photos/200',
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),
@@ -113,7 +118,7 @@ class _SettingView extends StatelessWidget {
                 ),
                 Container(height: 10, color: AppColors.background),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     spacing: 8,
                     children: [

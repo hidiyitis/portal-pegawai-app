@@ -233,6 +233,7 @@ class _FormCutiPageState extends State<FormCutiPage> {
             ),
             SizedBox(height: 8),
             DropdownButtonFormField<ManagerEntity>(
+              dropdownColor: Colors.white,
               decoration: InputDecoration(
                 hintText: 'Pilih Manager',
                 border: OutlineInputBorder(),

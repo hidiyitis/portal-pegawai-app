@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
@@ -9,6 +9,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<LoadProfile>(_onLoadProfile);
     on<UpdateProfilePicture>(_onUpdateProfilePicture);
     on<ChangePassword>(_onChangePassword);
+  }
+  @override
+  void onChange(Change<ProfileState> change) {
+    debugPrint('State change: ${change.currentState} -> ${change.nextState}');
+    super.onChange(change);
+  }
+
+  @override
+  void onEvent(ProfileEvent event) {
+    debugPrint('Event received: $event in state: $state');
+    super.onEvent(event);
   }
 
   Future<void> _onLoadProfile(
@@ -23,7 +34,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         ProfileLoaded(
           name: 'Arshita Hira',
           email: 'arshita@example.com',
-          profilePicture: null,
+          imageUrl: 'https://picsum.photos/200',
         ),
       );
     } catch (e) {
@@ -49,17 +60,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (image != null) {
         // Simulasi upload ke server
         await Future.delayed(const Duration(seconds: 1));
+        String newImageUrl =
+            'https://picsum.photos/200?random=${DateTime.now().millisecondsSinceEpoch}';
+
         emit(
           ProfileLoaded(
             name: currentState.name,
             email: currentState.email,
-            profilePicture: File(image.path),
+            imageUrl: newImageUrl,
           ),
         );
       } else {
         emit(currentState);
       }
     } catch (e) {
+      print(e.toString());
       emit(ProfileError('Gagal mengupdate foto: ${e.toString()}'));
       emit(currentState);
     }
@@ -85,7 +100,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         ProfileLoaded(
           name: (state as ProfileLoaded).name,
           email: (state as ProfileLoaded).email,
-          profilePicture: (state as ProfileLoaded).profilePicture,
+          imageUrl: (state as ProfileLoaded).imageUrl,
         ),
       );
     } catch (e) {

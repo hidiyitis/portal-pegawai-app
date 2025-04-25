@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 
@@ -39,7 +40,8 @@ class _NipFieldWidgetState extends State<NipFieldWidget> {
         ),
         TextFormField(
           controller: widget.controller,
-          cursorColor: AppColors.primary,
+          keyboardType: TextInputType.number, // Tampilkan keyboard angka
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: InputDecoration(
             label: Text(
               widget.labelText,
