@@ -1,24 +1,25 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileInitial()) {
+  final AuthRepository authRepository;
+
+  ProfileBloc({required this.authRepository}) : super(ProfileInitial()) {
     on<LoadProfile>(_onLoadProfile);
     on<UpdateProfilePicture>(_onUpdateProfilePicture);
     on<ChangePassword>(_onChangePassword);
   }
   @override
   void onChange(Change<ProfileState> change) {
-    debugPrint('State change: ${change.currentState} -> ${change.nextState}');
     super.onChange(change);
   }
 
   @override
   void onEvent(ProfileEvent event) {
-    debugPrint('Event received: $event in state: $state');
     super.onEvent(event);
   }
 
@@ -28,15 +29,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(ProfileLoading());
     try {
-      // Simulasi load data dari API
-      await Future.delayed(const Duration(seconds: 1));
-      emit(
-        ProfileLoaded(
-          name: 'Arshita Hira',
-          email: 'arshita@example.com',
-          imageUrl: 'https://picsum.photos/200',
-        ),
-      );
+      var user = await authRepository.getAuthUserData();
+      if (user != null) {
+        emit(
+          ProfileLoaded(
+            name: user.name,
+            nip: user.nip,
+            imageUrl: user.photoUrl,
+          ),
+        );
+      } else {
+        emit(
+          ProfileLoaded(
+            name: 'Arshita Hira',
+            nip: 1303223017,
+            imageUrl: 'https://picsum.photos/200',
+          ),
+        );
+      }
     } catch (e) {
       emit(ProfileError(e.toString()));
     }
@@ -66,7 +76,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(
           ProfileLoaded(
             name: currentState.name,
-            email: currentState.email,
+            nip: currentState.nip,
             imageUrl: newImageUrl,
           ),
         );
@@ -74,7 +84,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(currentState);
       }
     } catch (e) {
-      print(e.toString());
       emit(ProfileError('Gagal mengupdate foto: ${e.toString()}'));
       emit(currentState);
     }
@@ -99,7 +108,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(
         ProfileLoaded(
           name: (state as ProfileLoaded).name,
-          email: (state as ProfileLoaded).email,
+          nip: (state as ProfileLoaded).nip,
           imageUrl: (state as ProfileLoaded).imageUrl,
         ),
       );

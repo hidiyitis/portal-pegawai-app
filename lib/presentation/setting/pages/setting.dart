@@ -68,7 +68,7 @@ class _SettingView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                userData?['name'] ?? 'Arshita Hira',
+                                userData?.name ?? 'Arshita Hira',
                                 style: TextStyle(
                                   color: AppColors.onPrimary,
                                   fontSize: AppTextSize.headingSmall,
@@ -76,14 +76,14 @@ class _SettingView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                userData?['role'] ?? 'Developer',
+                                userData?.role ?? 'Developer',
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontSize: AppTextSize.bodyLarge,
                                 ),
                               ),
                               Text(
-                                userData?['nip']?.toString() ?? 'NIP',
+                                userData?.nip.toString() ?? 'NIP',
                                 style: TextStyle(
                                   color: AppColors.onSurface,
                                   fontSize: AppTextSize.bodyLarge,
@@ -103,7 +103,7 @@ class _SettingView extends StatelessWidget {
                               child: ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl:
-                                      userData?['photoUrl'] ??
+                                      userData?.photoUrl ??
                                       'https://picsum.photos/200',
                                   fit: BoxFit.cover,
                                 ),

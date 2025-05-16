@@ -40,14 +40,25 @@ class AppTheme {
       selectionHandleColor: AppColors.primary,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        elevation: 0,
-        textStyle: TextStyle(
-          fontSize: AppTextSize.bodyMedium,
-          fontWeight: FontWeight.w400,
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith<Color>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.disabled)) {
+            return AppColors.primaryVariant;
+          }
+          return AppColors.primary;
+        }),
+        elevation: WidgetStateProperty.all(0.0),
+        textStyle: WidgetStateProperty.all(
+          TextStyle(
+            fontSize: AppTextSize.bodyMedium,
+            fontWeight: FontWeight.w400,
+          ),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
     ),
     dialogTheme: DialogTheme(

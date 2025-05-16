@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_event.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_state.dart';
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(const Duration(minutes: 5), (timer) {
+    Timer.periodic(const Duration(seconds: 30), (timer) {
       context.read<AuthBloc>().add(AuthCheckEvent());
     });
   }
@@ -90,6 +91,12 @@ Widget _getPage(int index) {
 class HomePageWidget extends StatelessWidget {
   const HomePageWidget({super.key});
 
+  Future<void> _refreshData(BuildContext context) async {
+    context.read<HomeBloc>().add(LoadHomeData());
+
+    await Future.delayed(const Duration(seconds: 1));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
@@ -103,37 +110,45 @@ class HomePageWidget extends StatelessWidget {
       builder: (context, state) {
         if (state is HomeDataLoaded) {
           return SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    HeaderWidget(
-                      greeting: state.greeting,
-                      name: state.user?['name'] ?? 'Arshita Hira',
-                      role: state.user?['role'] ?? 'Developer',
-                    ),
-                    const SizedBox(height: 24),
-                    AttendanceWidget(
-                      isClockedIn: state.isClockedIn,
-                      lastClockInPhoto: state.lastClockInPhoto,
-                      lastClockInPosition: state.lastClockInPosition,
-                      onClockIn:
-                          () =>
-                              context.read<HomeBloc>().processClockIn(context),
-                      onClockOut:
-                          () =>
-                              context.read<HomeBloc>().add(ClockOutRequested()),
-                    ),
-                    const SizedBox(height: 24),
-                    AgendaWidget(agendas: state.agendas),
-                    const SizedBox(height: 24),
-                    LeaveWidget(leaveQuota: state.leaveQuota),
-                  ],
+            child: RefreshIndicator(
+              color: AppColors.primary,
+              backgroundColor: AppColors.surface,
+              onRefresh: () => _refreshData(context),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      HeaderWidget(
+                        greeting: state.greeting,
+                        name: state.user.name,
+                        role: state.user.department.name,
+                      ),
+                      const SizedBox(height: 24),
+                      AttendanceWidget(
+                        isClockedIn: state.isClockedIn,
+                        lastClockInPhoto: state.lastClockInPhoto,
+                        lastClockIn: state.lastClockIn,
+                        onClockIn:
+                            () => context.read<HomeBloc>().processClockIn(
+                              context,
+                            ),
+                        onClockOut:
+                            () => context.read<HomeBloc>().add(
+                              ClockOutRequested(),
+                            ),
+                      ),
+                      const SizedBox(height: 24),
+                      AgendaWidget(),
+                      const SizedBox(height: 24),
+                      LeaveWidget(leaveQuota: state.leaveQuota),
+                    ],
+                  ),
                 ),
               ),
             ),

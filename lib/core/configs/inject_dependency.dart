@@ -1,7 +1,11 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:portal_pegawai_app/data/datasources/agenda_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/local/auth_local_data_source.dart';
+import 'package:portal_pegawai_app/data/repositories/agenda_repository_impl.dart';
 import 'package:portal_pegawai_app/data/repositories/cuti_repository_impl.dart';
+import 'package:portal_pegawai_app/domain/repositories/agenda_repository.dart';
 import 'package:portal_pegawai_app/domain/repositories/cuti_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:portal_pegawai_app/data/datasources/auth_remote_data_source.dart';
@@ -11,11 +15,11 @@ import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 final getIt = GetIt.instance;
 
 Future<void> init() async {
-  // Dio
+  initializeDateFormatting('id_ID', null);
   getIt.registerLazySingleton(
     () => Dio(
       BaseOptions(
-        baseUrl: 'http://10.60.0.113:3000/api/v1',
+        baseUrl: 'http://192.168.18.231:3000/api/v1',
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       ),
@@ -38,12 +42,18 @@ Future<void> init() async {
     () => AuthLocalDataSourceImpl(prefs: getIt<SharedPreferences>()),
   );
 
+  getIt.registerLazySingleton<AgendaRemoteDataSource>(
+    () => AgendaRemoteDataSourceImpl(dio: getIt<Dio>()),
+  );
   // Repository
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       remote: getIt<AuthRemoteDataSource>(),
       local: getIt<AuthLocalDataSource>(),
     ),
+  );
+  getIt.registerLazySingleton<AgendaRepository>(
+    () => AgendaRepositoryImpl(remote: getIt<AgendaRemoteDataSource>()),
   );
   getIt.registerLazySingleton<CutiRepository>(() => CutiRepositoryImpl());
 }

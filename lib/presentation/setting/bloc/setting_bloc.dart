@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:portal_pegawai_app/data/models/user_model.dart';
+import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/setting/bloc/setting_event.dart';
 import 'package:portal_pegawai_app/presentation/setting/bloc/setting_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +17,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       final prefs = getIt<SharedPreferences>();
       if (prefs.containsKey('user')) {
-        final userData = jsonDecode(prefs.getString('user')!);
+        final userData = UserModel.fromJson(
+          jsonDecode(prefs.getString('user')!),
+        );
         emit(UserDataLoaded(userData));
       } else {
         emit(const UserDataLoaded(null));
@@ -27,9 +31,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   void _onLogoutUser(LogoutUser event, Emitter<SettingState> emit) async {
     try {
-      final prefs = getIt<SharedPreferences>();
-      await prefs.remove('user');
-      await prefs.remove('token');
+      final authRepo = getIt<AuthRepository>();
+      authRepo.clearAuthData();
       emit(LogoutSuccess());
     } catch (e) {
       emit(SettingError(e.toString()));

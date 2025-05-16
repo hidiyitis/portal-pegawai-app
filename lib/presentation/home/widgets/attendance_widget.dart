@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
@@ -14,7 +13,7 @@ class AttendanceWidget extends StatelessWidget {
     String? lastClockInPhoto,
     required Future<void> Function() onClockIn,
     required void Function() onClockOut,
-    Position? lastClockInPosition,
+    DateTime? lastClockIn,
   });
 
   @override
@@ -52,9 +51,11 @@ class AttendanceWidget extends StatelessWidget {
                       () =>
                           !state.isClockedIn
                               ? context.read<HomeBloc>().processClockIn(context)
-                              : context.read<HomeBloc>().add(
+                              : DateTime.now().hour >= 21
+                              ? context.read<HomeBloc>().add(
                                 ClockOutRequested(),
-                              ),
+                              )
+                              : null,
                   child: Text(
                     !state.isClockedIn ? 'Clock In' : 'Clock Out',
                     style: TextStyle(

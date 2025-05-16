@@ -45,7 +45,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => NavigationBloc()),
         BlocProvider(create: (context) => HomeBloc()..add(LoadHomeData())),
-        BlocProvider(create: (context) => ProfileBloc()),
+        BlocProvider(
+          create:
+              (context) =>
+                  ProfileBloc(authRepository: di.getIt<AuthRepository>()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

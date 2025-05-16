@@ -43,7 +43,7 @@ class HeaderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              state.user?['name'] ?? 'Arshita Hira',
+                              state.user.name,
                               style: TextStyle(
                                 color: AppColors.onPrimary,
                                 fontSize: AppTextSize.headingMedium,
@@ -53,7 +53,7 @@ class HeaderWidget extends StatelessWidget {
                             Transform.translate(
                               offset: const Offset(0, -8),
                               child: Text(
-                                state.user?['role'] ?? 'Developer',
+                                state.user.role,
                                 style: TextStyle(
                                   color: AppColors.onSurface,
                                   fontSize: AppTextSize.headingSmall,
@@ -116,9 +116,7 @@ class HeaderWidget extends StatelessWidget {
                           height: 64,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl:
-                                  state.user?['photoUrl'] ??
-                                  'https://picsum.photos/200',
+                              imageUrl: state.user.photoUrl,
                               fit: BoxFit.cover,
                             ),
                           ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
+import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_bloc.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
@@ -32,7 +34,10 @@ class ProfilePage extends StatelessWidget {
       body: SafeArea(
         child: BlocProvider(
           lazy: false,
-          create: (context) => ProfileBloc()..add(LoadProfile()),
+          create:
+              (context) =>
+                  ProfileBloc(authRepository: getIt<AuthRepository>())
+                    ..add(LoadProfile()),
           child: _profilePageContent(),
         ),
       ),
@@ -78,7 +83,7 @@ class ProfilePage extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Arshita Hira',
+          profile.name,
           style: TextStyle(
             fontSize: AppTextSize.headingSmall,
             fontWeight: FontWeight.w500,
@@ -86,7 +91,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         Text(
-          '1303223017',
+          profile.nip.toString(),
           style: TextStyle(
             fontSize: AppTextSize.bodyLarge,
             color: AppColors.primary,

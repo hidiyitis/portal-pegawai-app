@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:portal_pegawai_app/data/models/agenda_model.dart';
+import 'package:portal_pegawai_app/data/models/user_model.dart';
 
 abstract class HomeState extends Equatable {
   const HomeState();
@@ -17,14 +19,14 @@ class HomeLoading extends HomeState {
 
 class HomeDataLoaded extends HomeState {
   final String greeting;
-  final dynamic user;
+  final UserModel user;
   final String currentDate;
   final int notificationCount;
-  final List<Map<String, dynamic>> agendas;
+  final List<AgendasModel> agendas;
   final int leaveQuota;
   final bool isClockedIn;
   final String? lastClockInPhoto; // Path foto terakhir
-  final Position? lastClockInPosition; // Lokasi terakhir
+  final DateTime? lastClockIn; // Lokasi terakhir
 
   const HomeDataLoaded({
     required this.greeting,
@@ -35,17 +37,17 @@ class HomeDataLoaded extends HomeState {
     required this.leaveQuota,
     required this.isClockedIn,
     this.lastClockInPhoto,
-    this.lastClockInPosition,
+    this.lastClockIn,
   });
 
   // Update copyWith untuk handle new fields
   HomeDataLoaded copyWith({
     int? notificationCount,
-    List<Map<String, dynamic>>? agenda,
+    List<AgendasModel>? agenda,
     int? leaveQuota,
     bool? isClockedIn,
     String? lastClockInPhoto,
-    Position? lastClockInPosition,
+    DateTime? lastClockIn,
   }) {
     return HomeDataLoaded(
       greeting: greeting,
@@ -56,7 +58,7 @@ class HomeDataLoaded extends HomeState {
       leaveQuota: leaveQuota ?? this.leaveQuota,
       isClockedIn: isClockedIn ?? this.isClockedIn,
       lastClockInPhoto: lastClockInPhoto ?? this.lastClockInPhoto,
-      lastClockInPosition: lastClockInPosition ?? this.lastClockInPosition,
+      lastClockIn: lastClockIn ?? this.lastClockIn,
     );
   }
 
@@ -70,7 +72,7 @@ class HomeDataLoaded extends HomeState {
     leaveQuota,
     isClockedIn,
     lastClockInPhoto,
-    lastClockInPosition,
+    lastClockIn,
   ];
 }
 

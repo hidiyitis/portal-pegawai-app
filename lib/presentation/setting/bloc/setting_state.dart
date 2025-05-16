@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:portal_pegawai_app/data/models/user_model.dart';
 
 abstract class SettingState extends Equatable {
   const SettingState();
@@ -10,7 +11,7 @@ abstract class SettingState extends Equatable {
 class SettingInitial extends SettingState {}
 
 class UserDataLoaded extends SettingState {
-  final dynamic userData;
+  final UserModel? userData;
 
   const UserDataLoaded(this.userData);
 

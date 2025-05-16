@@ -29,6 +29,6 @@ class UserEntity {
     'role': role,
     'department_id': departmentId,
     'department': department.toJson(),
-    'isActive': isActive,
+    'is_active': isActive,
   };
 }

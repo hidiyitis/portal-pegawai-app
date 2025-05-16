@@ -1,18 +1,19 @@
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
+import 'package:portal_pegawai_app/domain/repositories/agenda_repository.dart';
+import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ImagePicker _picker = ImagePicker();
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
-
+  final AuthRepository _authRepository = getIt<AuthRepository>();
+  final AgendaRepository _agendaRepository = getIt<AgendaRepository>();
   HomeBloc() : super(HomeInitial()) {
     on<LoadHomeData>(_onLoadHomeData);
     on<ClockInRequested>(_onClockInRequested);
@@ -25,31 +26,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(HomeLoading());
     try {
-      final prefs = getIt<SharedPreferences>();
-      final user =
-          prefs.containsKey('user')
-              ? jsonDecode(prefs.getString('user')!)
-              : null;
+      final user = await _authRepository.getAuthUserData();
+      final agenda = await _agendaRepository.getListAgenda();
 
-      // Data dummy sesuai UI
-      final currentDate = DateFormat('EEEE, d MMMM y').format(DateTime.now());
+      final currentDate = DateFormat(
+        'EEEE, d MMMM y',
+        'id_ID',
+      ).format(DateTime.now());
       emit(
         HomeDataLoaded(
           greeting: _getGreeting(),
-          user: user,
+          user: user!,
           currentDate: currentDate,
           notificationCount: 8,
-          agendas: [
-            {
-              'time': DateTime.now().subtract(Duration(minutes: 10)),
-              'title': 'Sprint Planning – Ruang Meeting 10',
-            },
-            {
-              'time': DateTime.now().add(Duration(hours: 1)),
-              'title': 'Sprint Planning – Ruang Meeting 10',
-            },
-          ],
-          leaveQuota: 10,
+          agendas: agenda,
+          leaveQuota: user.leaveQuota,
           isClockedIn: false,
         ),
       );
@@ -74,6 +65,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     try {
+      var clockedIn = DateTime.now();
       // 1. Simpan data ke API (contoh simulasi)
       await Future.delayed(const Duration(seconds: 1));
 
@@ -82,7 +74,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         (state as HomeDataLoaded).copyWith(
           isClockedIn: true,
           lastClockInPhoto: event.photoPath,
-          lastClockInPosition: event.position,
+          lastClockIn: clockedIn,
         ),
       );
     } catch (e) {

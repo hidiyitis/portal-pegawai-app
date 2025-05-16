@@ -16,13 +16,13 @@ class ProfileLoading extends ProfileState {
 
 class ProfileLoaded extends ProfileState {
   final String name;
-  final String email;
+  final int nip;
   final String? imageUrl;
 
-  const ProfileLoaded({required this.name, required this.email, this.imageUrl});
+  const ProfileLoaded({required this.name, required this.nip, this.imageUrl});
 
   @override
-  List<Object?> get props => [name, email, imageUrl];
+  List<Object?> get props => [name, nip, imageUrl];
 }
 
 class ProfileUpdating extends ProfileState {
