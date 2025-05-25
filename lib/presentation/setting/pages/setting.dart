@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:portal_pegawai_app/common/constants/routes/routes_name.dart';
+import 'package:portal_pegawai_app/core/configs/assets/app_images.dart';
+import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
+import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/setting/bloc/setting_bloc.dart';
 import 'package:portal_pegawai_app/presentation/setting/bloc/setting_event.dart';
 import 'package:portal_pegawai_app/presentation/setting/bloc/setting_state.dart';
@@ -16,7 +19,9 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SettingBloc()..add(LoadUserData()),
+      create:
+          (context) =>
+              SettingBloc(getIt<AuthRepository>())..add(LoadUserData()),
       child: const _SettingView(),
     );
   }
@@ -102,9 +107,23 @@ class _SettingView extends StatelessWidget {
                               height: 64,
                               child: ClipOval(
                                 child: CachedNetworkImage(
-                                  imageUrl:
-                                      userData?.photoUrl ??
-                                      'https://picsum.photos/200',
+                                  imageUrl: userData?.photoUrl ?? '',
+                                  errorWidget:
+                                      (context, url, error) => Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            100,
+                                          ),
+                                          border: Border.all(
+                                            width: 2,
+                                            color: AppColors.onPrimary,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          IconlyLight.image,
+                                          size: AppTextSize.headingMedium,
+                                        ),
+                                      ),
                                   fit: BoxFit.cover,
                                 ),
                               ),
