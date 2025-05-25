@@ -3,6 +3,7 @@ import 'package:portal_pegawai_app/core/errors/error.dart';
 import 'package:portal_pegawai_app/data/datasources/auth_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/local/auth_local_data_source.dart';
 import 'package:portal_pegawai_app/data/models/auth_model.dart';
+import 'package:portal_pegawai_app/data/models/user_model.dart';
 import 'package:portal_pegawai_app/domain/entities/auth_entity.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 
@@ -31,4 +32,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> clearAuthData() => local.clearAuthData();
+
+  @override
+  Future<UserModel?> getAuthUserData() => local.getAuthUserData();
+
+  @override
+  Future<void> updateAuthData(UserModel user) => local.updateAuthData(user);
 }

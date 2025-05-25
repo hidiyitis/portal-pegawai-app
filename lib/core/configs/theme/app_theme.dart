@@ -11,6 +11,11 @@ class AppTheme {
       backgroundColor: AppColors.background,
       contentTextStyle: TextStyle(color: AppColors.primary),
     ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: AppColors.onBackground,
+      selectedItemColor: AppColors.primary,
+      type: BottomNavigationBarType.fixed,
+    ),
     fontFamily: 'Inter-Regular',
     inputDecorationTheme: InputDecorationTheme(
       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -28,21 +33,107 @@ class AppTheme {
         borderRadius: BorderRadius.circular(8),
         borderSide: BorderSide(color: AppColors.primary),
       ),
-      // enabledBorder: OutlineInputBorder(
-      //   borderRadius: BorderRadius.circular(8),
-      //   borderSide: BorderSide(color: AppColors.background),
-      // ),
+      counterStyle: TextStyle(color: AppColors.primary),
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: AppColors.primary,
+      selectionHandleColor: AppColors.primary,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        elevation: 0,
-        textStyle: TextStyle(
-          fontSize: AppTextSize.bodyMedium,
-          fontWeight: FontWeight.w400,
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith<Color>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.disabled)) {
+            return AppColors.primaryVariant;
+          }
+          return AppColors.primary;
+        }),
+        elevation: WidgetStateProperty.all(0.0),
+        textStyle: WidgetStateProperty.all(
+          TextStyle(
+            fontSize: AppTextSize.bodyMedium,
+            fontWeight: FontWeight.w400,
+          ),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
+    ),
+    dialogTheme: DialogTheme(
+      backgroundColor: Colors.white,
+      contentTextStyle: TextStyle(color: AppColors.onPrimary),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: AppColors.primary,
+    ),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: Colors.white,
+      headerBackgroundColor: AppColors.primary,
+      headerForegroundColor: Colors.white,
+      dayBackgroundColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      todayBackgroundColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      dayStyle: TextStyle(color: AppColors.onPrimary),
+      yearStyle: TextStyle(color: AppColors.onPrimary),
+      weekdayStyle: TextStyle(color: AppColors.onPrimary),
+      dividerColor: AppColors.primary,
+      cancelButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+      confirmButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+    ),
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: Colors.white,
+      hourMinuteColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? Colors.white
+            : AppColors.onPrimary;
+      }),
+      dayPeriodColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : Colors.white;
+      }),
+      dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
+        return states.contains(WidgetState.selected)
+            ? Colors.white
+            : AppColors.onPrimary;
+      }),
+      dialHandColor: AppColors.primary,
+      dialBackgroundColor: Colors.white,
+      entryModeIconColor: AppColors.primary,
+      cancelButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+      confirmButtonStyle: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+      ),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.white),
+    popupMenuTheme: PopupMenuThemeData(color: Colors.white),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.blue; // Selected color
+        }
+        return Colors.transparent; // Unselected color
+      }),
     ),
   );
 }
