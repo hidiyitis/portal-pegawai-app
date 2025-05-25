@@ -132,16 +132,13 @@ class HomePageWidget extends StatelessWidget {
                       const SizedBox(height: 24),
                       AttendanceWidget(
                         isClockedIn: state.isClockedIn,
-                        lastClockInPhoto: state.lastClockInPhoto,
+                        isClockedOut: state.isClockedOut,
                         lastClockIn: state.lastClockIn,
-                        onClockIn:
-                            () => context.read<HomeBloc>().processClockIn(
-                              context,
-                            ),
-                        onClockOut:
-                            () => context.read<HomeBloc>().add(
-                              ClockOutRequested(),
-                            ),
+                        lastClockOut: state.lastClockOut,
+                        onClockInOut:
+                            () => context
+                                .read<HomeBloc>()
+                                .processClockInClockOut(context),
                       ),
                       const SizedBox(height: 24),
                       AgendaWidget(),

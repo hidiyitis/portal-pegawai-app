@@ -22,7 +22,7 @@ class AgendaRemoteDataSourceImpl implements AgendaRemoteDataSource {
 
       final response = await dio.get(
         '/agendas',
-        queryParameters: {'date': '${DateTime.now().toIso8601String()}Z'},
+        queryParameters: {'date': DateTime.now().toUtc().toIso8601String()},
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -38,7 +38,7 @@ class AgendaRemoteDataSourceImpl implements AgendaRemoteDataSource {
 
         return dataList.map((item) {
           try {
-            return AgendasModel.fromJson(item as Map<String, dynamic>);
+            return AgendasModel.fromJson(item);
           } catch (e) {
             throw FormatException('Failed to parse agenda item: $e');
           }

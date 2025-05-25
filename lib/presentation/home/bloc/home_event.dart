@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class HomeEvent extends Equatable {
   const HomeEvent();
@@ -10,19 +11,14 @@ class LoadHomeData extends HomeEvent {
   List<Object> get props => [];
 }
 
-class ClockInRequested extends HomeEvent {
-  final String photoPath;
+class ClockInClockOutRequested extends HomeEvent {
+  final XFile photo;
   final Position position;
 
-  const ClockInRequested(this.photoPath, this.position);
+  const ClockInClockOutRequested(this.photo, this.position);
 
   @override
-  List<Object> get props => [photoPath, position];
-}
-
-class ClockOutRequested extends HomeEvent {
-  @override
-  List<Object> get props => [];
+  List<Object> get props => [photo, position];
 }
 
 class RequestLeave extends HomeEvent {

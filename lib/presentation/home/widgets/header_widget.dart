@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:portal_pegawai_app/common/constants/routes/routes_name.dart';
+import 'package:portal_pegawai_app/core/configs/assets/app_images.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
@@ -43,7 +44,7 @@ class HeaderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              state.user.name,
+                              state.user.name.split(' ')[0],
                               style: TextStyle(
                                 color: AppColors.onPrimary,
                                 fontSize: AppTextSize.headingMedium,
@@ -117,6 +118,20 @@ class HeaderWidget extends StatelessWidget {
                           child: ClipOval(
                             child: CachedNetworkImage(
                               imageUrl: state.user.photoUrl,
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      border: Border.all(
+                                        width: 2,
+                                        color: AppColors.onPrimary,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      IconlyLight.image,
+                                      size: AppTextSize.headingMedium,
+                                    ),
+                                  ),
                               fit: BoxFit.cover,
                             ),
                           ),

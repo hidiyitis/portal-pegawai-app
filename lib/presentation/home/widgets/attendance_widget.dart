@@ -3,17 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
-import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
 
 class AttendanceWidget extends StatelessWidget {
   const AttendanceWidget({
     super.key,
     required bool isClockedIn,
-    String? lastClockInPhoto,
-    required Future<void> Function() onClockIn,
-    required void Function() onClockOut,
-    DateTime? lastClockIn,
+    required bool isClockedOut,
+    required Future<void> Function() onClockInOut,
+    String? lastClockIn,
+    String? lastClockOut,
   });
 
   @override
@@ -33,27 +32,46 @@ class AttendanceWidget extends StatelessWidget {
                   fontSize: AppTextSize.headingSmall,
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'Runtutan',
-                    style: TextStyle(
-                      color: AppColors.onPrimary,
-                      fontSize: AppTextSize.bodyLarge,
+              state.isClockedIn || state.isClockedOut
+                  ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        state.isClockedIn ? 'Clock In' : 'Clock Out',
+                        style: TextStyle(
+                          color: AppColors.onPrimary,
+                          fontSize: AppTextSize.bodyLarge,
+                        ),
+                      ),
+                      Text(
+                        state.isClockedIn
+                            ? state.lastClockIn!
+                            : state.lastClockOut!,
+                        style: TextStyle(
+                          color: AppColors.onPrimary,
+                          fontSize: AppTextSize.bodyLarge,
+                        ),
+                      ),
+                    ],
+                  )
+                  : Center(
+                    child: Text(
+                      'Belum melakukan Clock In',
+                      style: TextStyle(
+                        color: AppColors.onPrimary,
+                        fontSize: AppTextSize.bodyLarge,
+                      ),
                     ),
                   ),
-                ],
-              ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed:
                       () =>
-                          !state.isClockedIn
-                              ? context.read<HomeBloc>().processClockIn(context)
-                              : DateTime.now().hour >= 21
-                              ? context.read<HomeBloc>().add(
-                                ClockOutRequested(),
+                          (!state.isClockedIn || !state.isClockedOut)
+                              ? context.read<HomeBloc>().processClockInClockOut(
+                                context,
                               )
                               : null,
                   child: Text(

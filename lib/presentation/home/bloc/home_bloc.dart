@@ -4,7 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
+import 'package:portal_pegawai_app/domain/entities/attendance_entity.dart';
 import 'package:portal_pegawai_app/domain/repositories/agenda_repository.dart';
+import 'package:portal_pegawai_app/domain/repositories/attendance_repository.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
@@ -14,10 +16,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
   final AuthRepository _authRepository = getIt<AuthRepository>();
   final AgendaRepository _agendaRepository = getIt<AgendaRepository>();
+  final AttendanceRepository _attendanceRepository =
+      getIt<AttendanceRepository>();
+
   HomeBloc() : super(HomeInitial()) {
     on<LoadHomeData>(_onLoadHomeData);
-    on<ClockInRequested>(_onClockInRequested);
-    on<ClockOutRequested>(_onClockOutRequested);
+    on<ClockInClockOutRequested>(_onClockInClockOutRequested);
   }
 
   Future<void> _onLoadHomeData(
@@ -28,7 +32,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final user = await _authRepository.getAuthUserData();
       final agenda = await _agendaRepository.getListAgenda();
-
+      final isClockedIn = await _attendanceRepository.checkClockedIn();
+      final isClockedOut = await _attendanceRepository.checkClockedOut();
       final currentDate = DateFormat(
         'EEEE, d MMMM y',
         'id_ID',
@@ -41,7 +46,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           notificationCount: 8,
           agendas: agenda,
           leaveQuota: user.leaveQuota,
-          isClockedIn: false,
+          isClockedIn: isClockedIn,
+          isClockedOut: isClockedOut,
+          lastClockIn:
+              isClockedIn ? await _attendanceRepository.getClockIn() : null,
+          lastClockOut:
+              isClockedOut ? await _attendanceRepository.getClockOut() : null,
         ),
       );
     } catch (e) {
@@ -60,21 +70,36 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         : 'Siang';
   }
 
-  Future<void> _onClockInRequested(
-    ClockInRequested event,
+  Future<void> _onClockInClockOutRequested(
+    ClockInClockOutRequested event,
     Emitter<HomeState> emit,
   ) async {
     try {
-      var clockedIn = DateTime.now();
-      // 1. Simpan data ke API (contoh simulasi)
-      await Future.delayed(const Duration(seconds: 1));
+      final isClockedIn = await _attendanceRepository.checkClockedIn();
+      final attendance = await _attendanceRepository.clockedInAndOut(
+        !isClockedIn
+            ? AttendenceStatus.CLOCK_IN.name
+            : AttendenceStatus.CLOCK_OUT.name,
+        event.position,
+        event.photo,
+      );
 
-      // 2. Update state
+      final isClockIn = attendance.status == AttendenceStatus.CLOCK_IN;
+      final isClockOut = attendance.status == AttendenceStatus.CLOCK_OUT;
+      final time =
+          DateFormat('HH:mm', 'id_ID').format(attendance.createdAt).toString();
+      await _attendanceRepository.storeClockedInClockOut(
+        attendance.status.name,
+        time,
+      );
+
       emit(
         (state as HomeDataLoaded).copyWith(
-          isClockedIn: true,
-          lastClockInPhoto: event.photoPath,
-          lastClockIn: clockedIn,
+          isClockedIn: isClockIn,
+          isClockedOut: isClockOut,
+          lastClockIn: isClockIn ? time : (state as HomeDataLoaded).lastClockIn,
+          lastClockOut:
+              isClockOut ? time : (state as HomeDataLoaded).lastClockOut,
         ),
       );
     } catch (e) {
@@ -82,17 +107,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<void> _onClockOutRequested(
-    ClockOutRequested event,
-    Emitter<HomeState> emit,
-  ) async {
-    if (state is HomeDataLoaded) {
-      emit((state as HomeDataLoaded).copyWith(isClockedIn: false));
-    }
-  }
-
-  // Helper method untuk dipanggil dari UI
-  Future<void> processClockIn(BuildContext context) async {
+  Future<void> processClockInClockOut(BuildContext context) async {
     try {
       // 1. Ambil foto dari kamera
       final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
@@ -102,7 +117,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final position = await _determinePosition();
 
       // 3. Trigger event
-      add(ClockInRequested(photo.path, position));
+      add(ClockInClockOutRequested(photo, position));
     } catch (e) {
       ScaffoldMessenger.of(
         context,

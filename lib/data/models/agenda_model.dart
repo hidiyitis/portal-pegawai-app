@@ -21,7 +21,7 @@ class AgendaModel {
 class AgendasModel {
   int? agendaId;
   String? title;
-  String? date;
+  DateTime? date;
   String? location;
   String? description;
   int? createdBy;
@@ -46,7 +46,7 @@ class AgendasModel {
     return AgendasModel(
       agendaId: json['agenda_id'],
       title: json['title'],
-      date: json['date'],
+      date: DateTime.parse(json['date']).toLocal(),
       location: json['location'],
       description: json['description'],
       createdBy: json['created_by'],

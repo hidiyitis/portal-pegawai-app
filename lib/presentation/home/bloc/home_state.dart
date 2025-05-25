@@ -25,8 +25,9 @@ class HomeDataLoaded extends HomeState {
   final List<AgendasModel> agendas;
   final int leaveQuota;
   final bool isClockedIn;
-  final String? lastClockInPhoto; // Path foto terakhir
-  final DateTime? lastClockIn; // Lokasi terakhir
+  final bool isClockedOut;
+  final String? lastClockIn;
+  final String? lastClockOut;
 
   const HomeDataLoaded({
     required this.greeting,
@@ -36,7 +37,8 @@ class HomeDataLoaded extends HomeState {
     required this.agendas,
     required this.leaveQuota,
     required this.isClockedIn,
-    this.lastClockInPhoto,
+    required this.isClockedOut,
+    this.lastClockOut,
     this.lastClockIn,
   });
 
@@ -46,8 +48,9 @@ class HomeDataLoaded extends HomeState {
     List<AgendasModel>? agenda,
     int? leaveQuota,
     bool? isClockedIn,
-    String? lastClockInPhoto,
-    DateTime? lastClockIn,
+    bool? isClockedOut,
+    String? lastClockIn,
+    String? lastClockOut,
   }) {
     return HomeDataLoaded(
       greeting: greeting,
@@ -57,8 +60,9 @@ class HomeDataLoaded extends HomeState {
       agendas: agenda ?? agendas,
       leaveQuota: leaveQuota ?? this.leaveQuota,
       isClockedIn: isClockedIn ?? this.isClockedIn,
-      lastClockInPhoto: lastClockInPhoto ?? this.lastClockInPhoto,
+      isClockedOut: isClockedOut ?? this.isClockedOut,
       lastClockIn: lastClockIn ?? this.lastClockIn,
+      lastClockOut: lastClockOut ?? this.lastClockOut,
     );
   }
 
@@ -71,8 +75,9 @@ class HomeDataLoaded extends HomeState {
     agendas,
     leaveQuota,
     isClockedIn,
-    lastClockInPhoto,
+    isClockedOut,
     lastClockIn,
+    lastClockOut,
   ];
 }
 

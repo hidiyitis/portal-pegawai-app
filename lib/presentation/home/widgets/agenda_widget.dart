@@ -82,7 +82,7 @@ class AgendaWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _formatTime(agendas.first.date!),
+                          _formatTime(agendas.first.date!.toString()),
                           style: TextStyle(
                             color: AppColors.onBackground,
                             fontSize: AppTextSize.headingLarge,
