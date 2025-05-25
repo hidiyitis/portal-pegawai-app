@@ -4,6 +4,7 @@ import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
+import 'package:portal_pegawai_app/domain/repositories/user_repository.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_bloc.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
@@ -35,9 +36,10 @@ class ProfilePage extends StatelessWidget {
         child: BlocProvider(
           lazy: false,
           create:
-              (context) =>
-                  ProfileBloc(authRepository: getIt<AuthRepository>())
-                    ..add(LoadProfile()),
+              (context) => ProfileBloc(
+                authRepository: getIt<AuthRepository>(),
+                userRepository: getIt<UserRepository>(),
+              )..add(LoadProfile()),
           child: _profilePageContent(),
         ),
       ),

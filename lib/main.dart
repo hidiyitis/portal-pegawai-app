@@ -7,6 +7,7 @@ import 'package:portal_pegawai_app/core/configs/inject_dependency.dart' as di;
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_theme.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
+import 'package:portal_pegawai_app/domain/repositories/user_repository.dart';
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
@@ -47,8 +48,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => HomeBloc()..add(LoadHomeData())),
         BlocProvider(
           create:
-              (context) =>
-                  ProfileBloc(authRepository: di.getIt<AuthRepository>()),
+              (context) => ProfileBloc(
+                authRepository: di.getIt<AuthRepository>(),
+                userRepository: di.getIt<UserRepository>(),
+              ),
         ),
       ],
       child: MaterialApp(

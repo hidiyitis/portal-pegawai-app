@@ -1,14 +1,17 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:portal_pegawai_app/data/models/user_model.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
+import 'package:portal_pegawai_app/domain/repositories/user_repository.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthRepository authRepository;
+  final UserRepository userRepository;
 
-  ProfileBloc({required this.authRepository}) : super(ProfileInitial()) {
+  ProfileBloc({required this.authRepository, required this.userRepository})
+    : super(ProfileInitial()) {
     on<LoadProfile>(_onLoadProfile);
     on<UpdateProfilePicture>(_onUpdateProfilePicture);
     on<ChangePassword>(_onChangePassword);
@@ -68,16 +71,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       );
 
       if (image != null) {
-        // Simulasi upload ke server
-        await Future.delayed(const Duration(seconds: 1));
-        String newImageUrl =
-            'https://picsum.photos/200?random=${DateTime.now().millisecondsSinceEpoch}';
-
+        UserModel updated = await userRepository.uploadAvatar(image);
+        await authRepository.updateAuthData(updated);
         emit(
           ProfileLoaded(
             name: currentState.name,
             nip: currentState.nip,
-            imageUrl: newImageUrl,
+            imageUrl: updated.photoUrl,
           ),
         );
       } else {

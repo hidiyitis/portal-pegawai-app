@@ -6,4 +6,5 @@ abstract class AuthRepository {
   Future<void> cacheAuthData(AuthEntity auth);
   Future<void> clearAuthData();
   Future<UserModel?> getAuthUserData();
+  Future<void> updateAuthData(UserModel user);
 }

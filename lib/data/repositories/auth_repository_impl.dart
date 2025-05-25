@@ -35,4 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<UserModel?> getAuthUserData() => local.getAuthUserData();
+
+  @override
+  Future<void> updateAuthData(UserModel user) => local.updateAuthData(user);
 }
