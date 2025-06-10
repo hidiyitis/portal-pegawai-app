@@ -19,4 +19,16 @@ class UserRepositoryImpl implements UserRepository {
       );
     }
   }
+
+  @override
+  Future<List<UserModel>> getUsers() {
+    try {
+      return remote.getUsers();
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Upload failed',
+      );
+    }
+    throw UnimplementedError();
+  }
 }

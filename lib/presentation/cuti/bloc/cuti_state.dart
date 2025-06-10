@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:portal_pegawai_app/data/models/user_model.dart';
 import 'package:portal_pegawai_app/domain/entities/cuti_entity.dart';
 import 'package:portal_pegawai_app/domain/entities/kuota_cuti_entity.dart';
 import 'package:portal_pegawai_app/domain/entities/manager_entity.dart';
@@ -28,7 +29,7 @@ class CutiDataLoaded extends CutiState {
 }
 
 class DaftarManagerLoaded extends CutiState {
-  final List<ManagerEntity> daftarManager;
+  final List<UserModel> daftarManager;
 
   DaftarManagerLoaded(this.daftarManager);
 
