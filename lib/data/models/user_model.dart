@@ -25,4 +25,18 @@ class UserModel extends UserEntity {
       isActive: json['is_active'],
     );
   }
+
+  /// 🔧 Factory method khusus untuk dummy partisipan dari nama saja
+  factory UserModel.participantStub(String name) {
+    return UserModel(
+      nip: 0,
+      name: name,
+      leaveQuota: 0,
+      photoUrl: '',
+      role: 'participant',
+      departmentId: 0,
+      department: DepartmentModel(departmentId: 0, name: 'Unknown'),
+      isActive: true,
+    );
+  }
 }

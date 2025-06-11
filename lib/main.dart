@@ -16,6 +16,9 @@ import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_state.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_bloc.dart';
+import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_bloc.dart';
+import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_event.dart';
+import 'package:portal_pegawai_app/domain/repositories/agenda_repository.dart';
 
 //test
 void main() async {
@@ -52,6 +55,12 @@ class MyApp extends StatelessWidget {
                 authRepository: di.getIt<AuthRepository>(),
                 userRepository: di.getIt<UserRepository>(),
               ),
+        ),
+        BlocProvider(
+          create:
+              (context) =>
+                  AgendaBloc(repository: di.getIt<AgendaRepository>())
+                    ..add(LoadAgenda()),
         ),
       ],
       child: MaterialApp(

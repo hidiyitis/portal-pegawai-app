@@ -4,7 +4,9 @@ import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 
 class CalendarHeader extends StatefulWidget {
-  const CalendarHeader({super.key});
+  final ValueChanged<DateTime> onDateSelected;
+
+  const CalendarHeader({super.key, required this.onDateSelected});
 
   @override
   State<CalendarHeader> createState() => _CalendarHeaderState();
@@ -23,11 +25,16 @@ class _CalendarHeaderState extends State<CalendarHeader> {
     'Jum',
     'Sab',
   ];
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _selectedDate = DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onDateSelected(
+        _selectedDate!,
+      ); // Kirim default date saat load pertama
+    });
   }
 
   @override
@@ -45,12 +52,10 @@ class _CalendarHeaderState extends State<CalendarHeader> {
 
     List<Widget> dayWidgets = [];
 
-    // Add blank days
     for (int i = 0; i < startWeekday; i++) {
       dayWidgets.add(const SizedBox.shrink());
     }
 
-    // Add day buttons
     for (int i = 1; i <= totalDaysInMonth; i++) {
       final currentDate = DateTime(_focusedMonth.year, _focusedMonth.month, i);
       final isSelected =
@@ -65,6 +70,7 @@ class _CalendarHeaderState extends State<CalendarHeader> {
             setState(() {
               _selectedDate = currentDate;
             });
+            widget.onDateSelected(currentDate); // ⬅️ Callback ke parent
           },
           child: Container(
             decoration: BoxDecoration(

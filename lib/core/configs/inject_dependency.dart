@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:portal_pegawai_app/data/datasources/auth_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/repositories/auth_repository_impl.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
+import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -26,7 +27,7 @@ Future<void> init() async {
   getIt.registerLazySingleton(
     () => Dio(
       BaseOptions(
-        baseUrl: 'http://192.168.18.230:3000/api/v1',
+        baseUrl: 'http://192.168.18.13:3000/api/v1',
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       ),
@@ -86,4 +87,8 @@ Future<void> init() async {
     () => UserRepositoryImpl(remote: getIt<UserRemoteDataSource>()),
   );
   getIt.registerLazySingleton<CutiRepository>(() => CutiRepositoryImpl());
+
+  getIt.registerFactory<AgendaBloc>(
+    () => AgendaBloc(repository: getIt<AgendaRepository>()),
+  );
 }

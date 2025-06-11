@@ -7,6 +7,7 @@ import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigatio
 import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_event.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
+import 'package:portal_pegawai_app/presentation/agenda/pages/agenda_list_page.dart';
 
 class AgendaWidget extends StatelessWidget {
   const AgendaWidget({super.key});
@@ -38,10 +39,15 @@ class AgendaWidget extends StatelessWidget {
                       surfaceTintColor: AppColors.onPrimary,
                       overlayColor: Colors.transparent,
                     ),
-                    onPressed:
-                        () => context.read<NavigationBloc>().add(
-                          NavigationTabChanged(1),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AgendaListPage(),
                         ),
+                      );
+                    },
+
                     child: Row(
                       children: [
                         Text(
