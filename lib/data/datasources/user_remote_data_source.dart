@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class UserRemoteDataSource {
   Future<UserModel> uploadAvatar(XFile file);
+  Future<List<UserModel>> getUsers();
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -34,6 +35,36 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     );
     if (response.statusCode == 200) {
       return UserModel.fromJson(response.data['data']);
+    }
+    throw Exception('${response.data['message']}');
+  }
+
+  @override
+  Future<List<UserModel>> getUsers() async {
+    var token = getIt<SharedPreferences>().getString('access_token');
+    if (token == null) {
+      throw Exception('Authentication token not found');
+    }
+
+    final response = await dio.get(
+      '/users/',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      final responseData = response.data as Map<String, dynamic>;
+      final dataList = responseData['data'] as List;
+      return dataList.map((item) {
+        try {
+          return UserModel.fromJson(item);
+        } catch (e) {
+          throw FormatException('Failed to parse users item: $e');
+        }
+      }).toList();
     }
     throw Exception('${response.data['message']}');
   }
