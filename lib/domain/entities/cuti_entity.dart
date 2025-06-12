@@ -8,7 +8,12 @@ class CutiEntity {
   final String? lampiran;
   final String? catatan;
   final String status;
-  final String tanggalPengajuan; // Baru
+  final String tanggalPengajuan;
+
+  // TAMBAHAN: Field baru untuk filename dan description yang benar
+  final String? attachmentFileName; // Untuk menyimpan nama file yang diupload
+  final String?
+  description; // Untuk menyimpan catatan/deskripsi yang sebenarnya
 
   CutiEntity({
     required this.id,
@@ -20,6 +25,9 @@ class CutiEntity {
     this.lampiran,
     this.catatan,
     required this.status,
-    required this.tanggalPengajuan, // Baru
+    required this.tanggalPengajuan,
+    // Tambahkan parameter baru dengan default value untuk backward compatibility
+    this.attachmentFileName,
+    this.description,
   });
 }

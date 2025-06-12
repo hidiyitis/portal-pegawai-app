@@ -20,15 +20,11 @@ class CutiDetailBottomSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Detail Cuti',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.onPrimary,
-              ),
-            ),
+            // Header section
+            _buildHeader(),
             SizedBox(height: 16),
+
+            // Basic information
             _buildDetailItem('Kegiatan', cuti.kegiatan),
             _buildDetailItem('Tanggal Mulai Cuti', cuti.tanggalMulai),
             _buildDetailItem('Tanggal Selesai Cuti', cuti.tanggalSelesai),
@@ -38,10 +34,136 @@ class CutiDetailBottomSheet extends StatelessWidget {
             ),
             _buildDetailItem('Manager', cuti.managerNama),
             _buildDetailItem('Status', _getStatusText(cuti.status)),
-            _buildDetailItem('Catatan', cuti.catatan ?? '-'),
+
+            // PERBAIKAN: Tampilkan filename dengan styling yang baik
+            _buildAttachmentSection(),
+
+            // PERBAIKAN: Tampilkan description/catatan yang sebenarnya
+            _buildDescriptionSection(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Text(
+      'Detail Pengajuan Cuti',
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: AppColors.onPrimary,
+      ),
+    );
+  }
+
+  // TAMBAHAN: Section khusus untuk attachment filename
+  Widget _buildAttachmentSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Lampiran',
+          style: TextStyle(
+            color: AppColors.onSecondary,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 4),
+
+        // Tampilkan filename atau pesan jika tidak ada
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: AppColors.primary.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                cuti.attachmentFileName != null
+                    ? Icons.attach_file
+                    : Icons.info_outline,
+                size: 20,
+                color:
+                    cuti.attachmentFileName != null
+                        ? AppColors.primary
+                        : AppColors.onSecondary,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  cuti.attachmentFileName ?? 'Tidak ada lampiran',
+                  style: TextStyle(
+                    color:
+                        cuti.attachmentFileName != null
+                            ? AppColors.onPrimary
+                            : AppColors.onSecondary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16),
+      ],
+    );
+  }
+
+  // TAMBAHAN: Section khusus untuk description/catatan
+  Widget _buildDescriptionSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Catatan',
+          style: TextStyle(
+            color: AppColors.onSecondary,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 4),
+
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.onSecondary.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: AppColors.onSecondary.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Text(
+            // Gunakan description yang sebenarnya, fallback ke 'catatan' untuk backward compatibility
+            cuti.description?.isNotEmpty == true
+                ? cuti.description!
+                : (cuti.catatan?.isNotEmpty == true
+                    ? cuti.catatan!
+                    : 'Tidak ada catatan tambahan'),
+            style: TextStyle(
+              color:
+                  (cuti.description?.isNotEmpty == true ||
+                          cuti.catatan?.isNotEmpty == true)
+                      ? AppColors.onPrimary
+                      : AppColors.onSecondary,
+              fontSize: 14,
+              height: 1.4, // Line height untuk readability
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -51,8 +173,13 @@ class CutiDetailBottomSheet extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: AppColors.onSecondary, fontSize: 14),
+          style: TextStyle(
+            color: AppColors.onSecondary,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
@@ -75,7 +202,7 @@ class CutiDetailBottomSheet extends StatelessWidget {
       case 'ditolak':
         return 'Ditolak';
       default:
-        return 'Unknown';
+        return 'Status Tidak Dikenal';
     }
   }
 
