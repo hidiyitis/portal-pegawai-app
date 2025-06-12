@@ -74,4 +74,15 @@ class AgendaRepositoryImpl implements AgendaRepository {
       );
     }
   }
+
+  @override
+  Future<List<AgendasModel>> getAgendaByDate(DateTime date) async {
+    try {
+      return await remote.getAgendaByDate(date);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Get agenda by date failed',
+      );
+    }
+  }
 }

@@ -12,8 +12,7 @@ class AgendaBloc extends Bloc<AgendaEvent, AgendaState> {
       emit(AgendaLoading());
 
       try {
-        final agendas =
-            await repository.getAllAgendas(); // ✅ ganti ke getAllAgendas
+        final agendas = await repository.getAllAgendas(); // Muat semua agenda
         emit(AgendaLoaded(agendas));
       } catch (e) {
         emit(AgendaError(e.toString()));
@@ -25,14 +24,22 @@ class AgendaBloc extends Bloc<AgendaEvent, AgendaState> {
 
       try {
         await repository.createAgenda(event.agenda);
-        final agendas =
-            await repository.getAllAgendas(); // ✅ ganti ke getAllAgendas
+        final agendas = await repository.getAllAgendas();
         emit(AgendaLoaded(agendas));
       } catch (e) {
         emit(AgendaError(e.toString()));
       }
     });
 
-    // TODO: tambahkan Update/Delete nanti
+    on<LoadAgendaByDate>((event, emit) async {
+      emit(AgendaLoading());
+
+      try {
+        final agendas = await repository.getAgendaByDate(event.date);
+        emit(AgendaLoaded(agendas));
+      } catch (e) {
+        emit(AgendaError(e.toString()));
+      }
+    });
   }
 }

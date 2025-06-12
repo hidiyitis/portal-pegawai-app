@@ -31,7 +31,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoading());
     try {
       final user = await _authRepository.getAuthUserData();
-      final agenda = await _agendaRepository.getListAgenda();
+      final agenda = await _agendaRepository.getAllAgendas();
+
       final isClockedIn = await _attendanceRepository.checkClockedIn();
       final isClockedOut = await _attendanceRepository.checkClockedOut();
       final currentDate = DateFormat(

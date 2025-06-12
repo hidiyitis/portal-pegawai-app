@@ -8,8 +8,20 @@ abstract class AgendaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+// Memuat semua agenda
 class LoadAgenda extends AgendaEvent {}
 
+// Memuat agenda berdasarkan tanggal
+class LoadAgendaByDate extends AgendaEvent {
+  final DateTime date;
+
+  const LoadAgendaByDate(this.date);
+
+  @override
+  List<Object?> get props => [date];
+}
+
+// Menambahkan agenda baru
 class AddAgenda extends AgendaEvent {
   final AgendasModel agenda;
 

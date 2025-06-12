@@ -7,4 +7,5 @@ abstract class AgendaRepository {
   Future<void> deleteAgenda(int id);
   Future<AgendasModel> getAgendaById(int id);
   Future<List<AgendasModel>> getAllAgendas();
+  Future<List<AgendasModel>> getAgendaByDate(DateTime date);
 }

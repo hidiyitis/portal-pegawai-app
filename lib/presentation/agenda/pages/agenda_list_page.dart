@@ -16,7 +16,7 @@ class AgendaListPage extends StatefulWidget {
 }
 
 class _AgendaListPageState extends State<AgendaListPage> {
-  String selectedFilter = 'Semua';
+  String selectedFilter = 'Hari Ini';
 
   @override
   void initState() {
@@ -54,15 +54,33 @@ class _AgendaListPageState extends State<AgendaListPage> {
                   }
 
                   if (state is AgendaLoaded) {
+                    final allAgendas = [...state.agendas];
+                    allAgendas.sort((a, b) {
+                      final aDate = a.date ?? DateTime(2000);
+                      final bDate = b.date ?? DateTime(2000);
+                      return bDate.compareTo(aDate);
+                    });
+
+                    final now = DateTime.now();
+                    final next3Days = now.add(const Duration(days: 3));
+
                     final filtered =
                         selectedFilter == 'Hari Ini'
-                            ? state.agendas.where((a) {
-                              final today = DateTime.now();
-                              return a.date?.year == today.year &&
-                                  a.date?.month == today.month &&
-                                  a.date?.day == today.day;
+                            ? allAgendas.where((a) {
+                              return a.date != null &&
+                                  a.date!.year == now.year &&
+                                  a.date!.month == now.month &&
+                                  a.date!.day == now.day;
                             }).toList()
-                            : state.agendas;
+                            : allAgendas.where((a) {
+                              return a.date != null &&
+                                  a.date!.isAfter(
+                                    now.subtract(const Duration(seconds: 1)),
+                                  ) &&
+                                  a.date!.isBefore(
+                                    next3Days.add(const Duration(days: 1)),
+                                  );
+                            }).toList();
 
                     if (filtered.isEmpty) {
                       return const Center(
@@ -102,7 +120,7 @@ class _AgendaListPageState extends State<AgendaListPage> {
   }
 
   Widget _buildFilter() {
-    final filters = ['Semua', 'Hari Ini'];
+    final filters = ['Hari Ini', 'Next 3 Hari'];
 
     return Row(
       children:
@@ -238,6 +256,11 @@ class AgendaDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final participantsText =
+        (agenda.participants != null && agenda.participants!.isNotEmpty)
+            ? agenda.participants!.map((e) => e.name).join(', ')
+            : '-';
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
@@ -247,25 +270,39 @@ class AgendaDetailDialog extends StatelessWidget {
           fontSize: AppTextSize.headingSmall,
         ),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildRow(
-            'Tanggal',
-            DateFormat.yMMMMEEEEd().format(agenda.date!.toLocal()),
-          ),
-          const SizedBox(height: 8),
-          _buildRow('Waktu', DateFormat.Hm().format(agenda.date!.toLocal())),
-          const SizedBox(height: 8),
-          _buildRow('Lokasi', agenda.location ?? '-'),
-          const SizedBox(height: 8),
-          _buildRow('Deskripsi', agenda.description ?? '-'),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildRow(
+              'Tanggal',
+              agenda.date != null
+                  ? DateFormat.yMMMMEEEEd().format(agenda.date!.toLocal())
+                  : '-',
+            ),
+            const SizedBox(height: 8),
+            _buildRow(
+              'Waktu',
+              agenda.date != null
+                  ? DateFormat.Hm().format(agenda.date!.toLocal())
+                  : '--:--',
+            ),
+            const SizedBox(height: 8),
+            _buildRow('Lokasi', agenda.location ?? '-'),
+            const SizedBox(height: 8),
+            _buildRow('Deskripsi', agenda.description ?? '-'),
+            const SizedBox(height: 8),
+            _buildRow('Partisipan', participantsText),
+          ],
+        ),
       ),
       actions: [
         TextButton(
-          child: const Text('Tutup'),
+          child: const Text(
+            'Tutup',
+            style: TextStyle(color: AppColors.primary),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ],

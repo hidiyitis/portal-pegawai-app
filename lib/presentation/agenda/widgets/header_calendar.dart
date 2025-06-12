@@ -4,9 +4,14 @@ import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 
 class CalendarHeader extends StatefulWidget {
-  final ValueChanged<DateTime> onDateSelected;
+  final Function(DateTime)? onDateSelected;
+  final List<DateTime> agendaDates;
 
-  const CalendarHeader({super.key, required this.onDateSelected});
+  const CalendarHeader({
+    super.key,
+    this.onDateSelected,
+    required this.agendaDates,
+  });
 
   @override
   State<CalendarHeader> createState() => _CalendarHeaderState();
@@ -30,11 +35,20 @@ class _CalendarHeaderState extends State<CalendarHeader> {
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.onDateSelected(
-        _selectedDate!,
-      ); // Kirim default date saat load pertama
-    });
+  }
+
+  bool _hasAgenda(DateTime day) {
+    return widget.agendaDates.any(
+      (aDate) =>
+          aDate.year == day.year &&
+          aDate.month == day.month &&
+          aDate.day == day.day,
+    );
+  }
+
+  bool _isPast(DateTime day) {
+    final now = DateTime.now();
+    return day.isBefore(DateTime(now.year, now.month, now.day));
   }
 
   @override
@@ -64,13 +78,16 @@ class _CalendarHeaderState extends State<CalendarHeader> {
           _selectedDate!.month == _focusedMonth.month &&
           _selectedDate!.year == _focusedMonth.year;
 
+      final hasAgenda = _hasAgenda(currentDate);
+      final isPast = _isPast(currentDate);
+
       dayWidgets.add(
         GestureDetector(
           onTap: () {
             setState(() {
               _selectedDate = currentDate;
             });
-            widget.onDateSelected(currentDate); // ⬅️ Callback ke parent
+            widget.onDateSelected?.call(currentDate);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -78,14 +95,34 @@ class _CalendarHeaderState extends State<CalendarHeader> {
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: Text(
-              i.toString(),
-              style: TextStyle(
-                color:
-                    isSelected ? AppColors.onBackground : AppColors.onPrimary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                fontSize: AppTextSize.bodyMedium,
-              ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Text(
+                  i.toString(),
+                  style: TextStyle(
+                    color:
+                        isSelected
+                            ? AppColors.onBackground
+                            : AppColors.onPrimary,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: AppTextSize.bodyMedium,
+                  ),
+                ),
+                if (hasAgenda)
+                  Positioned(
+                    bottom: 4,
+                    child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isPast ? AppColors.onError : AppColors.primary,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),

@@ -19,4 +19,9 @@ class UserRepositoryImpl implements UserRepository {
       );
     }
   }
+
+  @override
+  Future<List<UserModel>> getAllUsers() {
+    return remote.getAllUsers(); // Pastikan remote sudah punya fungsi ini
+  }
 }

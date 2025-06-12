@@ -30,6 +30,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    // ⏳ Panggil LoadHomeData saat pertama kali halaman dibuka
+    context.read<HomeBloc>().add(LoadHomeData());
+
+    // Cek token tiap 30 detik
     Timer.periodic(const Duration(seconds: 30), (timer) {
       context.read<AuthBloc>().add(AuthCheckEvent());
     });

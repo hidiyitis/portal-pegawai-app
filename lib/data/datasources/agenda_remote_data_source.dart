@@ -10,6 +10,7 @@ abstract class AgendaRemoteDataSource {
   Future<void> deleteAgenda(int id);
   Future<AgendasModel> getAgendaById(int id);
   Future<List<AgendasModel>> getAllAgendas();
+  Future<List<AgendasModel>> getAgendaByDate(DateTime date);
 }
 
 class AgendaRemoteDataSourceImpl implements AgendaRemoteDataSource {
@@ -71,6 +72,8 @@ class AgendaRemoteDataSourceImpl implements AgendaRemoteDataSource {
         "date": agenda.date?.toUtc().toIso8601String(),
         "location": agenda.location,
         "description": agenda.description,
+        "participants": agenda.participants?.map((e) => e.nip).toList(),
+        "created_by": agenda.createdBy,
       },
       options: Options(
         headers: {
@@ -163,6 +166,31 @@ class AgendaRemoteDataSourceImpl implements AgendaRemoteDataSource {
       return dataList.map((e) => AgendasModel.fromJson(e)).toList();
     } else {
       throw Exception('Failed to fetch all agendas');
+    }
+  }
+
+  @override
+  Future<List<AgendasModel>> getAgendaByDate(DateTime date) async {
+    final prefs = getIt<SharedPreferences>();
+    final token = prefs.getString('access_token');
+    if (token == null) throw Exception("Unauthorized");
+
+    final response = await dio.get(
+      '/agendas',
+      queryParameters: {'date': date.toUtc().toIso8601String()},
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final data = response.data['data'] as List;
+      return data.map((e) => AgendasModel.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load agenda by date');
     }
   }
 }

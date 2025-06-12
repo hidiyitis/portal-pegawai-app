@@ -9,7 +9,7 @@ import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_state.dart';
 import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_event.dart';
 import 'package:portal_pegawai_app/presentation/agenda/widgets/agenda_tile.dart';
 import 'package:portal_pegawai_app/presentation/agenda/widgets/header_calendar.dart';
-import 'addAgenda.dart';
+import 'package:portal_pegawai_app/presentation/agenda/pages/addAgenda.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -43,11 +43,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            CalendarHeader(
-              onDateSelected: (date) {
-                setState(() {
-                  _selectedDate = date;
-                });
+            const SizedBox(height: 8),
+            BlocBuilder<AgendaBloc, AgendaState>(
+              builder: (context, state) {
+                List<AgendasModel> agendas = [];
+                List<DateTime> agendaDates = [];
+
+                if (state is AgendaLoaded) {
+                  agendas = state.agendas;
+                  agendaDates =
+                      agendas
+                          .where((a) => a.date != null)
+                          .map((a) => a.date!)
+                          .toList();
+                }
+
+                return CalendarHeader(
+                  agendaDates: agendaDates,
+                  onDateSelected: (date) {
+                    setState(() => _selectedDate = date);
+                  },
+                );
               },
             ),
             const SizedBox(height: 16),
@@ -105,7 +121,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   if (state is AgendaLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is AgendaLoaded) {
-                    final agendas = state.agendas;
+                    final agendas =
+                        state.agendas
+                            .where(
+                              (a) =>
+                                  a.date != null &&
+                                  a.date!.year == _selectedDate.year &&
+                                  a.date!.month == _selectedDate.month &&
+                                  a.date!.day == _selectedDate.day,
+                            )
+                            .toList();
 
                     if (agendas.isEmpty) {
                       return const Center(
@@ -117,20 +142,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       itemCount: agendas.length,
                       itemBuilder: (context, index) {
                         final a = agendas[index];
-
-                        return AgendaTile(
-                          agenda: AgendaModel(
-                            title: a.title ?? '',
-                            subtitle: a.location ?? '',
-                            time:
-                                a.date != null
-                                    ? DateFormat.Hm().format(a.date!)
-                                    : '--:--',
-                            color: AppColors.primary,
-                            dateLabel:
-                                a.date != null
-                                    ? DateFormat('d\nMMM').format(a.date!)
-                                    : '--\n--',
+                        return GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AgendaDetailDialog(agenda: a),
+                            );
+                          },
+                          child: AgendaTile(
+                            agenda: AgendaModel(
+                              title: a.title ?? '',
+                              subtitle: a.location ?? '',
+                              time:
+                                  a.date != null
+                                      ? DateFormat.Hm().format(a.date!)
+                                      : '--:--',
+                              color: AppColors.primary,
+                              dateLabel:
+                                  a.date != null
+                                      ? DateFormat('d\nMMM').format(a.date!)
+                                      : '--\n--',
+                            ),
                           ),
                         );
                       },
@@ -148,6 +180,67 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class AgendaDetailDialog extends StatelessWidget {
+  final AgendasModel agenda;
+
+  const AgendaDetailDialog({super.key, required this.agenda});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text(
+        agenda.title ?? 'Detail Agenda',
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: AppTextSize.headingSmall,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRow(
+            'Tanggal',
+            DateFormat.yMMMMEEEEd().format(agenda.date!.toLocal()),
+          ),
+          const SizedBox(height: 8),
+          _buildRow('Waktu', DateFormat.Hm().format(agenda.date!.toLocal())),
+          const SizedBox(height: 8),
+          _buildRow('Lokasi', agenda.location ?? '-'),
+          const SizedBox(height: 8),
+          _buildRow('Deskripsi', agenda.description ?? '-'),
+          const SizedBox(height: 8),
+          if (agenda.participants != null && agenda.participants!.isNotEmpty)
+            _buildRow(
+              'Partisipan',
+              agenda.participants!.map((p) => p.name).join(', '),
+            ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: const Text(
+            'Tutup',
+            style: TextStyle(color: AppColors.primary),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Expanded(child: Text(value)),
+      ],
     );
   }
 }

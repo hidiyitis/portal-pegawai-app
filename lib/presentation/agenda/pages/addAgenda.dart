@@ -5,8 +5,10 @@ import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
 import 'package:portal_pegawai_app/data/models/agenda_model.dart';
 import 'package:portal_pegawai_app/data/models/user_model.dart';
+import 'package:portal_pegawai_app/domain/repositories/user_repository.dart';
 import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_bloc.dart';
 import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_event.dart';
+import 'package:get_it/get_it.dart';
 
 class AddAgendaScreen extends StatefulWidget {
   final DateTime selectedDate;
@@ -24,16 +26,28 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
   final TextEditingController _tempatController = TextEditingController();
   final TextEditingController _catatanController = TextEditingController();
 
-  final List<String> partisipanOptions = ['Tutus', 'Yobel', 'Jay'];
-  List<String> selectedPartisipan = [];
+  List<UserModel> allUsers = [];
+  List<UserModel> selectedPartisipan = [];
   TimeOfDay? selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadParticipants();
+  }
+
+  void _loadParticipants() async {
+    final users = await GetIt.I<UserRepository>().getAllUsers();
+    setState(() {
+      allUsers = users;
+    });
+  }
 
   void _selectTime() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
-
     if (picked != null) {
       setState(() {
         selectedTime = picked;
@@ -57,11 +71,8 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
         date: date,
         location: _tempatController.text,
         description: _catatanController.text,
-        participants:
-            selectedPartisipan
-                .map((name) => UserModel.participantStub(name))
-                .toList(),
-        createdBy: 1, // hardcoded sementara
+        participants: selectedPartisipan,
+        createdBy: 1, // sementara
       );
 
       context.read<AgendaBloc>().add(AddAgenda(newAgenda));
@@ -95,23 +106,27 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                   const SizedBox(height: 16),
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: partisipanOptions.length,
+                    itemCount: allUsers.length,
                     itemBuilder: (context, index) {
-                      final name = partisipanOptions[index];
-                      final isSelected = selectedPartisipan.contains(name);
+                      final user = allUsers[index];
+                      final isSelected = selectedPartisipan.any(
+                        (u) => u.nip == user.nip,
+                      );
                       return CheckboxListTile(
                         value: isSelected,
                         onChanged: (value) {
                           setModalState(() {
                             if (value == true) {
-                              selectedPartisipan.add(name);
+                              selectedPartisipan.add(user);
                             } else {
-                              selectedPartisipan.remove(name);
+                              selectedPartisipan.removeWhere(
+                                (u) => u.nip == user.nip,
+                              );
                             }
                           });
                           setState(() {});
                         },
-                        title: Text(name),
+                        title: Text(user.name),
                       );
                     },
                   ),
@@ -159,7 +174,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
   @override
   Widget build(BuildContext context) {
     final dateText = DateFormat.yMMMMd('id_ID').format(widget.selectedDate);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -193,7 +207,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
               _buildTextLabel("Kegiatan"),
               TextFormField(
                 controller: _kegiatanController,
@@ -203,7 +216,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                 decoration: const InputDecoration(hintText: 'Nama Kegiatan'),
               ),
               const SizedBox(height: 16),
-
               _buildTextLabel("Waktu"),
               TextFormField(
                 controller: _waktuController,
@@ -215,7 +227,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                 decoration: const InputDecoration(hintText: '--:--'),
               ),
               const SizedBox(height: 16),
-
               _buildTextLabel("Tempat"),
               TextFormField(
                 controller: _tempatController,
@@ -225,7 +236,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                 decoration: const InputDecoration(hintText: 'Lokasi'),
               ),
               const SizedBox(height: 16),
-
               _buildTextLabel("Partisipan"),
               GestureDetector(
                 onTap: _showPartisipanSelector,
@@ -241,7 +251,7 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                   child: Text(
                     selectedPartisipan.isEmpty
                         ? "Pilih Partisipan"
-                        : selectedPartisipan.join(', '),
+                        : selectedPartisipan.map((u) => u.name).join(', '),
                     style: TextStyle(
                       fontSize: AppTextSize.bodyMedium,
                       color:
@@ -253,7 +263,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
               _buildTextLabel("Catatan", optional: true),
               TextFormField(
                 controller: _catatanController,
@@ -261,7 +270,6 @@ class _AddAgendaScreenState extends State<AddAgendaScreen> {
                 decoration: const InputDecoration(hintText: 'Tambahan'),
               ),
               const SizedBox(height: 24),
-
               ElevatedButton(
                 onPressed: _submitAgenda,
                 style: ElevatedButton.styleFrom(
