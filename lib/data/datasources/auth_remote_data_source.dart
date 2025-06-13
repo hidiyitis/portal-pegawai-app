@@ -16,6 +16,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       '/auth/login',
       data: {'nip': nip, 'password': password},
     );
+    print(response.statusCode);
     return AuthModel.fromJson(response.data['data']);
   }
 }

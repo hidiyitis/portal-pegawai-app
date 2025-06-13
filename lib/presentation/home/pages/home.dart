@@ -10,11 +10,11 @@ import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigatio
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
-import 'package:portal_pegawai_app/presentation/home/widgets/agenda_widget.dart';
+import 'package:portal_pegawai_app/presentation/agenda/widgets/agenda_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/attendance_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/header_widget.dart';
 import 'package:portal_pegawai_app/presentation/home/widgets/leave_widget.dart';
-import 'package:portal_pegawai_app/presentation/home/pages/calendar/calendar.dart';
+import 'package:portal_pegawai_app/presentation/agenda/pages/calendar.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_bloc.dart';
 import 'package:portal_pegawai_app/presentation/login/bloc/auth_event.dart';
 import 'package:portal_pegawai_app/presentation/setting/pages/setting.dart';
@@ -30,6 +30,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    // ⏳ Panggil LoadHomeData saat pertama kali halaman dibuka
+    context.read<HomeBloc>().add(LoadHomeData());
+
+    // Cek token tiap 30 detik
     Timer.periodic(const Duration(seconds: 30), (timer) {
       context.read<AuthBloc>().add(AuthCheckEvent());
     });

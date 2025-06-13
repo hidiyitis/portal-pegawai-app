@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
-import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_bloc.dart';
-import 'package:portal_pegawai_app/presentation/bottom_navigation/bloc/navigation_event.dart';
+import 'package:portal_pegawai_app/presentation/agenda/pages/agenda_list_page.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_bloc.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
 
@@ -16,7 +15,23 @@ class AgendaWidget extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         if (state is HomeDataLoaded) {
-          final agendas = state.agendas;
+          final allAgendas = state.agendas;
+          final now = DateTime.now();
+          final agendasToday =
+              allAgendas.where((a) {
+                final d = a.date?.toLocal();
+                return d != null &&
+                    d.year == now.year &&
+                    d.month == now.month &&
+                    d.day == now.day;
+              }).toList();
+          print('📅 Today: ${DateTime.now()}');
+          for (var a in allAgendas) {
+            print(
+              '🔹 Agenda: ${a.title}, date: ${a.date}, local: ${a.date?.toLocal()}',
+            );
+          }
+          print('HomeDataLoaded total agendas: ${state.agendas.length}');
 
           return Column(
             children: [
@@ -32,16 +47,20 @@ class AgendaWidget extends StatelessWidget {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
                       surfaceTintColor: AppColors.onPrimary,
                       overlayColor: Colors.transparent,
                     ),
-                    onPressed:
-                        () => context.read<NavigationBloc>().add(
-                          NavigationTabChanged(1),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AgendaListPage(),
                         ),
+                      );
+                    },
                     child: Row(
                       children: [
                         Text(
@@ -51,7 +70,7 @@ class AgendaWidget extends StatelessWidget {
                             fontSize: AppTextSize.bodyLarge,
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.chevron_right_outlined,
                           size: 24,
                           color: AppColors.onPrimary,
@@ -61,16 +80,16 @@ class AgendaWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              if (agendas.isNotEmpty)
+              if (agendasToday.isNotEmpty)
                 GestureDetector(
                   onTap: () {},
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.only(top: 8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
                           AppColors.primaryBoldVariant,
                           AppColors.primary,
@@ -82,7 +101,9 @@ class AgendaWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _formatTime(agendas.first.date!.toString()),
+                          _formatTime(
+                            agendasToday.first.date!.toLocal().toString(),
+                          ),
                           style: TextStyle(
                             color: AppColors.onBackground,
                             fontSize: AppTextSize.headingLarge,
@@ -90,7 +111,7 @@ class AgendaWidget extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${agendas.first.title} - ${agendas.first.location}',
+                          '${agendasToday.first.title} - ${agendasToday.first.location}',
                           style: TextStyle(
                             color: AppColors.onBackground,
                             fontSize: AppTextSize.bodySmall,
@@ -102,7 +123,7 @@ class AgendaWidget extends StatelessWidget {
                 )
               else
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     color: AppColors.surface,
@@ -116,16 +137,16 @@ class AgendaWidget extends StatelessWidget {
           );
         }
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: AppColors.surface,
           ),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [CircularProgressIndicator(color: AppColors.primary)],
           ),
-        ); // Loading state
+        );
       },
     );
   }
@@ -133,7 +154,7 @@ class AgendaWidget extends StatelessWidget {
   String _formatTime(String dateString) {
     try {
       final date = DateTime.parse(dateString).toLocal();
-      return DateFormat('hh:mm a').format(date);
+      return DateFormat('HH:mm').format(date);
     } catch (e) {
       return '--:--';
     }

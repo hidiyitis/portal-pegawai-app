@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:portal_pegawai_app/data/models/user_model.dart';
 
 class AgendaModel {
@@ -7,14 +6,14 @@ class AgendaModel {
   final String subtitle;
   final String time;
   final Color color;
-  final String dateLabel; // ✅ Tambahkan ini
+  final String dateLabel;
 
   AgendaModel({
     required this.title,
     required this.subtitle,
     required this.time,
     required this.color,
-    required this.dateLabel, // ✅ Tambahkan ini
+    required this.dateLabel,
   });
 }
 
@@ -42,18 +41,21 @@ class AgendasModel {
     this.createdAt,
     this.updatedAt,
   });
+
+  /// 🔄 JSON deserialization
   factory AgendasModel.fromJson(Map<String, dynamic> json) {
     return AgendasModel(
       agendaId: json['agenda_id'],
       title: json['title'],
-      date: DateTime.parse(json['date']).toLocal(),
+      date:
+          json['date'] != null ? DateTime.parse(json['date']).toLocal() : null,
       location: json['location'],
       description: json['description'],
       createdBy: json['created_by'],
       creator:
           json['creator'] != null ? UserModel.fromJson(json['creator']) : null,
       participants:
-          json['participants'].length > 0
+          json['participants'] != null
               ? (json['participants'] as List)
                   .map((e) => UserModel.fromJson(e))
                   .toList()
@@ -61,5 +63,17 @@ class AgendasModel {
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
     );
+  }
+
+  /// 🔄 JSON serialization (for POST/PUT)
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'location': location,
+      'date': date?.toUtc().toIso8601String(),
+      'created_by': createdBy,
+      'participants': participants?.map((e) => e.nip).toList(), // ⬅️ penting
+    };
   }
 }

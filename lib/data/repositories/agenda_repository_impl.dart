@@ -8,14 +8,80 @@ class AgendaRepositoryImpl implements AgendaRepository {
   final AgendaRemoteDataSource remote;
 
   AgendaRepositoryImpl({required this.remote});
+
   @override
   Future<List<AgendasModel>> getListAgenda() async {
     try {
-      var res = await remote.getListAgenda();
-      return res;
+      return await remote.getListAgenda();
     } on DioException catch (e) {
       throw ServerExecption(
         message: e.response?.data['message'] ?? 'Get agenda failed',
+      );
+    }
+  }
+
+  @override
+  Future<void> createAgenda(AgendasModel agenda) async {
+    try {
+      await remote.createAgenda(agenda);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Create agenda failed',
+      );
+    }
+  }
+
+  @override
+  Future<void> updateAgenda(int id, AgendasModel agenda) async {
+    try {
+      await remote.updateAgenda(id, agenda);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Update agenda failed',
+      );
+    }
+  }
+
+  @override
+  Future<void> deleteAgenda(int id) async {
+    try {
+      await remote.deleteAgenda(id);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Delete agenda failed',
+      );
+    }
+  }
+
+  @override
+  Future<AgendasModel> getAgendaById(int id) async {
+    try {
+      return await remote.getAgendaById(id);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Get agenda by ID failed',
+      );
+    }
+  }
+
+  @override
+  Future<List<AgendasModel>> getAllAgendas() async {
+    try {
+      return await remote.getAllAgendas();
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Get all agenda failed',
+      );
+    }
+  }
+
+  @override
+  Future<List<AgendasModel>> getAgendaByDate(DateTime date) async {
+    try {
+      return await remote.getAgendaByDate(date);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Get agenda by date failed',
       );
     }
   }
