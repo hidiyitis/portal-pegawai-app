@@ -1,6 +1,9 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/data/datasources/agenda_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/datasources/attendance_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/datasources/user_remote_data_source.dart';
@@ -21,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:portal_pegawai_app/data/datasources/auth_remote_data_source.dart';
 import 'package:portal_pegawai_app/data/repositories/auth_repository_impl.dart';
 import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
-import 'package:portal_pegawai_app/presentation/agenda/bloc/agenda_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -35,7 +37,7 @@ Future<void> init() async {
   getIt.registerLazySingleton(
     () => Dio(
       BaseOptions(
-        baseUrl: 'http://192.168.18.13:3000/api/v1',
+        baseUrl: 'http://192.168.18.249:3000/api/v1',
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       ),
@@ -49,6 +51,23 @@ Future<void> init() async {
   } catch (e) {
     throw Exception('Failed to initialize SharedPreferences: $e');
   }
+
+  await AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'basic_channel',
+      channelName: 'Basic notifications',
+      channelDescription: 'Notification channel desc',
+      defaultColor: AppColors.primary,
+      ledColor: Colors.white,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+      onlyAlertOnce: true,
+      playSound: true,
+      criticalAlerts: true,
+    ),
+  ], debug: false);
+
+  await AwesomeNotifications().requestPermissionToSendNotifications();
 
   // === REMOTE DATA SOURCES ===
   // Registrasi semua remote data source yang menangani komunikasi dengan backend
@@ -122,8 +141,4 @@ Future<void> init() async {
   // Tetap gunakan implementasi dummy untuk backward compatibility
   // Nantinya CutiRepository yang lama bisa diganti dengan LeaveRequestRepository
   getIt.registerLazySingleton<CutiRepository>(() => CutiRepositoryImpl());
-
-  getIt.registerFactory<AgendaBloc>(
-    () => AgendaBloc(repository: getIt<AgendaRepository>()),
-  );
 }

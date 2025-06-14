@@ -94,27 +94,32 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     if (state is! ProfileLoaded) return;
-
+    final currentState = state as ProfileLoaded;
     emit(ProfileUpdating(state as ProfileLoaded));
 
     try {
-      // Simulasi proses ganti password
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (event.newPassword.length < 6) {
-        throw Exception('Password minimal 6 karakter');
+      if (event.newPassword.length < 8) {
+        throw Exception('Password minimal 8 karakter');
       }
 
+      final data = await userRepository.updatePassword(
+        event.currentPassword,
+        event.newPassword,
+        event.confirmPassword,
+      );
+      emit(ProfileError('Success Update password'));
       emit(
-        ProfileLoaded(
-          name: (state as ProfileLoaded).name,
-          nip: (state as ProfileLoaded).nip,
-          imageUrl: (state as ProfileLoaded).imageUrl,
-        ),
+        ProfileLoaded(name: data.name, nip: data.nip, imageUrl: data.photoUrl),
       );
     } catch (e) {
       emit(ProfileError('Gagal ganti password: ${e.toString()}'));
-      emit(state as ProfileLoaded);
+      emit(
+        ProfileLoaded(
+          name: currentState.name,
+          nip: currentState.nip,
+          imageUrl: currentState.imageUrl,
+        ),
+      );
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
@@ -8,6 +10,12 @@ abstract class UserRemoteDataSource {
   Future<UserModel> uploadAvatar(XFile file);
   Future<List<UserModel>> getUsers();
   Future<List<UserModel>> getAllUsers();
+  Future<UserModel> updatePassword(
+    String current,
+    String newPass,
+    String confirmPass,
+  );
+  Future<UserModel> getCurrentUser();
 }
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
@@ -91,6 +99,66 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
           throw FormatException('Failed to parse users item: $e');
         }
       }).toList();
+    }
+    throw Exception('${response.data['message']}');
+  }
+
+  @override
+  Future<UserModel> updatePassword(
+    String current,
+    String newPass,
+    String confirmPass,
+  ) async {
+    var token = getIt<SharedPreferences>().getString('access_token');
+    if (token == null) {
+      throw Exception('Authentication token not found');
+    }
+
+    try {
+      final response = await dio.put(
+        '/users/update-password',
+        data: {
+          'current_password': current,
+          'new_password': newPass,
+          'confirm_password': confirmPass,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['data']);
+      }
+      throw Exception('${response.data['message']}');
+    } catch (e) {
+      throw Exception('Failed Update password');
+    }
+  }
+
+  @override
+  Future<UserModel> getCurrentUser() async {
+    var prefs = getIt<SharedPreferences>();
+    var token = prefs.getString('access_token');
+    var user = UserModel.fromJson(jsonDecode(prefs.getString('user')!));
+
+    if (token == null) {
+      throw Exception('Authentication token not found');
+    }
+
+    final response = await dio.get(
+      '/users/${user.nip}',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      return UserModel.fromJson(response.data['data']);
     }
     throw Exception('${response.data['message']}');
   }

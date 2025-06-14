@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_colors.dart';
 import 'package:portal_pegawai_app/core/configs/theme/app_text_size.dart';
-import 'package:portal_pegawai_app/presentation/login/widgets/password_field_widget.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_bloc.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_event.dart';
 import 'package:portal_pegawai_app/presentation/profile/bloc/profile_state.dart';
@@ -20,6 +19,7 @@ class _PasswordFormState extends State<PasswordForm> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  bool _obscureCurrent = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -37,17 +37,42 @@ class _PasswordFormState extends State<PasswordForm> {
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 16,
         children: [
           const Text(
             'Ganti Password',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
-          PasswordFieldWidget(
+          TextFormField(
             controller: _currentPasswordController,
-            labelText: 'Password Saat Ini',
+            cursorColor: AppColors.primary,
+            obscureText: _obscureCurrent,
+            decoration: InputDecoration(
+              label: Text(
+                'Password Sekarang',
+                style: TextStyle(fontSize: AppTextSize.bodySmall),
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureCurrent ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureCurrent = !_obscureCurrent;
+                  });
+                },
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Harap masukkan password baru';
+              }
+              if (value.length < 8) {
+                return 'Password minimal 8 karakter';
+              }
+              return null;
+            },
           ),
-          const SizedBox(height: 16),
           TextFormField(
             controller: _newPasswordController,
             cursorColor: AppColors.primary,
@@ -78,7 +103,6 @@ class _PasswordFormState extends State<PasswordForm> {
               return null;
             },
           ),
-          const SizedBox(height: 16),
           TextFormField(
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
@@ -109,7 +133,6 @@ class _PasswordFormState extends State<PasswordForm> {
               return null;
             },
           ),
-          const SizedBox(height: 24),
           BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               return ElevatedButton(
@@ -130,6 +153,8 @@ class _PasswordFormState extends State<PasswordForm> {
                                 currentPassword:
                                     _currentPasswordController.text,
                                 newPassword: _newPasswordController.text,
+                                confirmPassword:
+                                    _confirmPasswordController.text,
                               ),
                             );
                           }

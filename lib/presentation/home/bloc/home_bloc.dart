@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,15 +8,15 @@ import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
 import 'package:portal_pegawai_app/domain/entities/attendance_entity.dart';
 import 'package:portal_pegawai_app/domain/repositories/agenda_repository.dart';
 import 'package:portal_pegawai_app/domain/repositories/attendance_repository.dart';
-import 'package:portal_pegawai_app/domain/repositories/auth_repository.dart';
+import 'package:portal_pegawai_app/domain/repositories/user_repository.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_event.dart';
 import 'package:portal_pegawai_app/presentation/home/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ImagePicker _picker = ImagePicker();
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
-  final AuthRepository _authRepository = getIt<AuthRepository>();
   final AgendaRepository _agendaRepository = getIt<AgendaRepository>();
+  final UserRepository _userRepository = getIt<UserRepository>();
   final AttendanceRepository _attendanceRepository =
       getIt<AttendanceRepository>();
 
@@ -30,8 +31,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(HomeLoading());
     try {
-      final user = await _authRepository.getAuthUserData();
-      final agenda = await _agendaRepository.getAllAgendas();
+      final user = await _userRepository.getCurrentUser();
+      final agenda = await _agendaRepository.getListAgenda();
 
       final isClockedIn = await _attendanceRepository.checkClockedIn();
       final isClockedOut = await _attendanceRepository.checkClockedOut();
@@ -42,7 +43,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         HomeDataLoaded(
           greeting: _getGreeting(),
-          user: user!,
+          user: user,
           currentDate: currentDate,
           notificationCount: 8,
           agendas: agenda,
@@ -92,6 +93,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       await _attendanceRepository.storeClockedInClockOut(
         attendance.status.name,
         time,
+      );
+      _showNotification(
+        attendance.status.name.split('_').join(' '),
+        attendance.createdAt,
       );
 
       emit(
@@ -145,5 +150,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     return await _geolocator.getCurrentPosition();
+  }
+
+  Future<void> _showNotification(String status, DateTime time) async {
+    final now = DateTime.now();
+    final timeString =
+        '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}:'
+        '${time.second.toString().padLeft(2, '0')}';
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: now.millisecondsSinceEpoch % 100000,
+        channelKey: 'basic_channel',
+        title: 'Notifikasi $status',
+        body: 'Anda melakukan $status pada waktu $timeString',
+        notificationLayout: NotificationLayout.Default,
+      ),
+    );
   }
 }

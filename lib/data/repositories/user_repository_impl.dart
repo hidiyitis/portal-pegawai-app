@@ -34,6 +34,31 @@ class UserRepositoryImpl implements UserRepository {
         message: e.response?.data['message'] ?? 'Upload failed',
       );
     }
-    throw UnimplementedError();
+  }
+
+  @override
+  Future<UserModel> updatePassword(
+    String current,
+    String newPass,
+    String confirmPass,
+  ) {
+    try {
+      return remote.updatePassword(current, newPass, confirmPass);
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Failed Update Password',
+      );
+    }
+  }
+
+  @override
+  Future<UserModel> getCurrentUser() {
+    try {
+      return remote.getCurrentUser();
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Failed Update Password',
+      );
+    }
   }
 }
