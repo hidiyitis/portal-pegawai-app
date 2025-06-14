@@ -52,4 +52,16 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   Future<bool> checkClockedOut() {
     return local.checkClockedOut();
   }
+
+  @override
+  Future<AttendanceModel> getLastClock() async {
+    try {
+      var res = await remote.getLastClock();
+      return res;
+    } on DioException catch (e) {
+      throw ServerExecption(
+        message: e.response?.data['message'] ?? 'Attendance failed',
+      );
+    }
+  }
 }

@@ -11,6 +11,7 @@ abstract class AttendanceRemoteDateSource {
     Position position,
     XFile file,
   );
+  Future<AttendanceModel> getLastClock();
 }
 
 class AttendanceRemoteDataSourceImpl implements AttendanceRemoteDateSource {
@@ -36,7 +37,7 @@ class AttendanceRemoteDataSourceImpl implements AttendanceRemoteDateSource {
     });
 
     final response = await dio.post(
-      '/attandance',
+      '/attendance',
       data: formData,
       options: Options(
         headers: {
@@ -46,6 +47,29 @@ class AttendanceRemoteDataSourceImpl implements AttendanceRemoteDateSource {
       ),
     );
     if (response.statusCode == 201) {
+      final res = AttendanceModel.fromJson(response.data['data']);
+      return res;
+    }
+    throw Exception('${response.data['message']}');
+  }
+
+  @override
+  Future<AttendanceModel> getLastClock() async {
+    var token = getIt<SharedPreferences>().getString('access_token');
+    if (token == null) {
+      throw Exception('Authentication token not found');
+    }
+
+    final response = await dio.get(
+      '/attendance/last',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
       final res = AttendanceModel.fromJson(response.data['data']);
       return res;
     }

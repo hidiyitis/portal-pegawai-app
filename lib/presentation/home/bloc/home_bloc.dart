@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:portal_pegawai_app/core/configs/inject_dependency.dart';
+import 'package:portal_pegawai_app/data/models/attendance_model.dart';
 import 'package:portal_pegawai_app/domain/entities/attendance_entity.dart';
 import 'package:portal_pegawai_app/domain/repositories/agenda_repository.dart';
 import 'package:portal_pegawai_app/domain/repositories/attendance_repository.dart';
@@ -34,8 +35,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final user = await _userRepository.getCurrentUser();
       final agenda = await _agendaRepository.getListAgenda();
 
-      final isClockedIn = await _attendanceRepository.checkClockedIn();
-      final isClockedOut = await _attendanceRepository.checkClockedOut();
+      var isClockedIn = await _attendanceRepository.checkClockedIn();
+      var isClockedOut = await _attendanceRepository.checkClockedOut();
+      var time;
+
+      if (!(isClockedIn && isClockedOut)) {
+        AttendanceModel attendance = await _attendanceRepository.getLastClock();
+        time =
+            DateFormat(
+              'HH:mm',
+              'id_ID',
+            ).format(attendance.createdAt).toString();
+        if (attendance.status.name == 'CLOCK_IN') {
+          isClockedIn = true;
+        } else {
+          isClockedOut = true;
+        }
+      }
+
       final currentDate = DateFormat(
         'EEEE, d MMMM y',
         'id_ID',
@@ -50,10 +67,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           leaveQuota: user.leaveQuota,
           isClockedIn: isClockedIn,
           isClockedOut: isClockedOut,
-          lastClockIn:
-              isClockedIn ? await _attendanceRepository.getClockIn() : null,
-          lastClockOut:
-              isClockedOut ? await _attendanceRepository.getClockOut() : null,
+          lastClockIn: time ?? await _attendanceRepository.getClockIn(),
+          lastClockOut: time ?? await _attendanceRepository.getClockOut(),
         ),
       );
     } catch (e) {

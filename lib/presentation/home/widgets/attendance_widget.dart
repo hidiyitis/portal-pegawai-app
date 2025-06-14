@@ -38,7 +38,7 @@ class AttendanceWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        state.isClockedIn ? 'Clock In' : 'Clock Out',
+                        'Terakhir ${state.isClockedIn ? 'Clock In' : 'Clock Out'}',
                         style: TextStyle(
                           color: AppColors.onPrimary,
                           fontSize: AppTextSize.bodyLarge,

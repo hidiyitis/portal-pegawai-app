@@ -13,4 +13,5 @@ abstract class AttendanceRepository {
   Future<String?> getClockOut();
   Future<bool> checkClockedIn();
   Future<bool> checkClockedOut();
+  Future<AttendanceModel> getLastClock();
 }
