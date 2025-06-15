@@ -80,10 +80,7 @@ class _FormCutiPageState extends State<FormCutiPage> {
           listener: (context, state) {
             if (state is CutiSubmitSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Pengajuan cuti berhasil dikirim'),
-                  backgroundColor: Colors.green,
-                ),
+                SnackBar(content: Text('Pengajuan cuti berhasil dikirim')),
               );
               Navigator.of(context).pop();
             } else if (state is FormCutiError) {
@@ -506,18 +503,12 @@ class _FormCutiPageState extends State<FormCutiPage> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('File berhasil dipilih: ${file.name}'),
-            backgroundColor: Colors.green,
-          ),
+          SnackBar(content: Text('File berhasil dipilih: ${file.name}')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal memilih file: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Gagal memilih file: ${e.toString()}')),
       );
     }
   }
@@ -566,9 +557,9 @@ class _FormCutiPageState extends State<FormCutiPage> {
         errorMessage += ', termasuk lampiran dokumen';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.orange),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 }
