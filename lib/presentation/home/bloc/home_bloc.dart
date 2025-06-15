@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -40,16 +42,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       var time;
 
       if (!(isClockedIn && isClockedOut)) {
-        AttendanceModel attendance = await _attendanceRepository.getLastClock();
-        time =
-            DateFormat(
-              'HH:mm',
-              'id_ID',
-            ).format(attendance.createdAt).toString();
-        if (attendance.status.name == 'CLOCK_IN') {
-          isClockedIn = true;
-        } else {
-          isClockedOut = true;
+        try {
+          AttendanceModel attendance =
+              await _attendanceRepository.getLastClock();
+          time =
+              DateFormat(
+                'HH:mm',
+                'id_ID',
+              ).format(attendance.createdAt).toString();
+          if (attendance.status.name == 'CLOCK_IN') {
+            isClockedIn = true;
+          } else {
+            isClockedOut = true;
+          }
+        } catch (e) {
+          log(e.toString());
         }
       }
 

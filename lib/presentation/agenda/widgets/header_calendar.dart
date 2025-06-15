@@ -112,13 +112,13 @@ class _CalendarHeaderState extends State<CalendarHeader> {
                 ),
                 if (hasAgenda)
                   Positioned(
-                    bottom: 4,
+                    bottom: 0,
                     child: Container(
-                      width: 6,
-                      height: 6,
+                      width: 4,
+                      height: 4,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isPast ? AppColors.onError : AppColors.primary,
+                        color: isPast ? AppColors.secondary : AppColors.primary,
                       ),
                     ),
                   ),
