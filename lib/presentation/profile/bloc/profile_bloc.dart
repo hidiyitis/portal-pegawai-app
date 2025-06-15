@@ -112,7 +112,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         ProfileLoaded(name: data.name, nip: data.nip, imageUrl: data.photoUrl),
       );
     } catch (e) {
-      emit(ProfileError('Gagal ganti password: ${e.toString()}'));
+      emit(ProfileError(e.toString()));
       emit(
         ProfileLoaded(
           name: currentState.name,

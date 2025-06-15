@@ -24,7 +24,7 @@ class PasswordFieldWidget extends StatefulWidget {
 }
 
 class _PasswordFieldWidgetState extends State<PasswordFieldWidget> {
-  final bool _obsecure = true;
+  bool _obsecure = true;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -46,6 +46,14 @@ class _PasswordFieldWidgetState extends State<PasswordFieldWidget> {
             label: Text(
               widget.labelText,
               style: TextStyle(fontSize: AppTextSize.bodySmall),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(_obsecure ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _obsecure = !_obsecure;
+                });
+              },
             ),
           ),
           validator: (value) {

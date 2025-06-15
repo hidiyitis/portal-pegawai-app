@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
@@ -109,33 +110,54 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     String newPass,
     String confirmPass,
   ) async {
-    var token = getIt<SharedPreferences>().getString('access_token');
+    // var token = getIt<SharedPreferences>().getString('access_token');
+    // if (token == null) {
+    //   throw Exception('Authentication token not found');
+    // }
+    // final response = await dio.put(
+    //   '/users/update-password',
+    //   data: {
+    //     'current_password': current,
+    //     'new_password': newPass,
+    //     'confirm_password': confirmPass,
+    //   },
+    //   options: Options(
+    //     headers: {
+    //       'Authorization': 'Bearer $token',
+    //       'Accept': 'application/json',
+    //     },
+    //   ),
+    // );
+    // if (response.statusCode == 200) {
+    //   return UserModel.fromJson(response.data['data']);
+    // }
+    // throw Exception('${response.data['message']}');
+
+    var prefs = getIt<SharedPreferences>();
+    var token = prefs.getString('access_token');
+
     if (token == null) {
       throw Exception('Authentication token not found');
     }
 
-    try {
-      final response = await dio.put(
-        '/users/update-password',
-        data: {
-          'current_password': current,
-          'new_password': newPass,
-          'confirm_password': confirmPass,
+    final response = await dio.put(
+      '/users/update-password',
+      data: {
+        'current_password': current,
+        'new_password': newPass,
+        'confirm_password': confirmPass,
+      },
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
         },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
-        ),
-      );
-      if (response.statusCode == 200) {
-        return UserModel.fromJson(response.data['data']);
-      }
-      throw Exception('${response.data['message']}');
-    } catch (e) {
-      throw Exception('Failed Update password');
+      ),
+    );
+    if (response.statusCode == 200) {
+      return UserModel.fromJson(response.data['data']);
     }
+    throw Exception('${response.data['message']}');
   }
 
   @override

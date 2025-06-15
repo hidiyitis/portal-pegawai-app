@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:portal_pegawai_app/core/errors/error.dart';
@@ -10,9 +12,9 @@ class UserRepositoryImpl implements UserRepository {
 
   UserRepositoryImpl({required this.remote});
   @override
-  Future<UserModel> uploadAvatar(XFile file) {
+  Future<UserModel> uploadAvatar(XFile file) async {
     try {
-      return remote.uploadAvatar(file);
+      return await remote.uploadAvatar(file);
     } on DioException catch (e) {
       throw ServerExecption(
         message: e.response?.data['message'] ?? 'Upload failed',
@@ -21,14 +23,14 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<UserModel>> getAllUsers() {
-    return remote.getAllUsers(); // Pastikan remote sudah punya fungsi ini
+  Future<List<UserModel>> getAllUsers() async {
+    return await remote.getAllUsers(); // Pastikan remote sudah punya fungsi ini
   }
 
   @override
-  Future<List<UserModel>> getUsers() {
+  Future<List<UserModel>> getUsers() async {
     try {
-      return remote.getUsers();
+      return await remote.getUsers();
     } on DioException catch (e) {
       throw ServerExecption(
         message: e.response?.data['message'] ?? 'Upload failed',
@@ -41,9 +43,10 @@ class UserRepositoryImpl implements UserRepository {
     String current,
     String newPass,
     String confirmPass,
-  ) {
+  ) async {
     try {
-      return remote.updatePassword(current, newPass, confirmPass);
+      var res = await remote.updatePassword(current, newPass, confirmPass);
+      return res;
     } on DioException catch (e) {
       throw ServerExecption(
         message: e.response?.data['message'] ?? 'Failed Update Password',
