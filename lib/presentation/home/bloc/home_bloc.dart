@@ -138,7 +138,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> processClockInClockOut(BuildContext context) async {
     try {
       // 1. Ambil foto dari kamera
-      final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxHeight: 480,
+        maxWidth: 640,
+        imageQuality: 50,
+      );
       if (photo == null) return;
 
       // 2. Ambil lokasi
@@ -150,6 +155,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      add(LoadHomeData());
     }
   }
 
